@@ -18,7 +18,7 @@ from pathlib import Path
 
 from faker import Faker
 
-from lib import outlet
+from lib import audience, outlet
 from lib.config import SEED
 
 ROOT: Path = Path(__file__).parent
@@ -63,6 +63,12 @@ def main() -> None:
         outlet.write_pageviews(conn, pageview_rows)
         print(f"[outlet] pageview rows: {len(pageview_rows)}")
         print(f"[outlet] viral articles: {sorted(viral_ids)}")
+
+        conn.commit()  # commit outlet tables so audience can read aggregates
+
+        audience_rows = audience.build_audience_daily(rng, conn)
+        audience.write_audience_daily(conn, audience_rows)
+        print(f"[audience] rows: {len(audience_rows)}")
 
         conn.commit()
     finally:

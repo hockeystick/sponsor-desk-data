@@ -55,7 +55,26 @@ COUNTRY_WEIGHTS: dict[str, float] = {
 }
 
 # Share of sessions that are English (via site translation feature).
+# Overall target ~12%; per-country split differs because diaspora readers
+# skew bilingual and rest-of-world traffic is mostly English.
 LANGUAGE_EN_SHARE: float = 0.12
+
+LANGUAGE_EN_SHARE_BY_COUNTRY: dict[str, float] = {
+    "CO":    0.10,
+    "US":    0.15,
+    "ES":    0.04,
+    "MX":    0.03,
+    "other": 0.40,
+}
+
+# Sessions are slightly larger than article pageviews because sessions
+# include homepage/nav traffic. Spec's consistency rule: sum(pageviews)
+# = 80-95% of sum(sessions) → sessions ≈ 1.15 × pageviews on average.
+SESSION_PAGEVIEW_RATIO: float = 1.42
+
+# Minimum session count to emit an audience_daily row. Keeps low-share
+# dimension combos out of the table.
+MIN_AUDIENCE_SESSIONS: int = 265
 
 # Tail-length ranges in days by section. Drives pageviews_daily row-count.
 # Investigations have the longest tails; commodity news decays fastest.
