@@ -168,7 +168,33 @@ ENGAGEMENT_BUCKET_SPLIT: dict[str, float] = {
 }
 
 # Share of subscribers on exactly 1, 2, or 3 of the newsletters.
-LIST_OVERLAP_SPLIT: dict[int, float] = {1: 0.55, 2: 0.30, 3: 0.15}
+# Calibrated so total opt-ins (~57,100) matches the sum of list target
+# sizes Diario+Verde+Sobremesa = 57,000. A more aggressive 55/30/15 split
+# would overshoot target list sizes by ~25%.
+LIST_OVERLAP_SPLIT: dict[int, float] = {1: 0.76, 2: 0.21, 3: 0.03}
+
+SUBSCRIBER_COUNTRY_WEIGHTS: dict[str, float] = {
+    "CO": 0.75, "US": 0.10, "ES": 0.06, "MX": 0.03, "other": 0.06,
+}
+
+SUBSCRIBER_EN_SHARE_BY_COUNTRY: dict[str, float] = {
+    "CO": 0.08, "US": 0.15, "ES": 0.04, "MX": 0.03, "other": 0.35,
+}
+
+# Year-on-year new-subscriber share. Outlet founded Jan 2018; gradual
+# growth with COVID bump and post-pandemic plateau.
+SUBSCRIBER_YEAR_GROWTH: dict[int, float] = {
+    2018: 0.11, 2019: 0.09, 2020: 0.11, 2021: 0.13,
+    2022: 0.16, 2023: 0.18, 2024: 0.13, 2025: 0.09,
+}
+
+# Days-since-reference-date that last_active_at falls into, per bucket.
+# Reference date is ARTICLES_END.
+LAST_ACTIVE_DAYS_BY_BUCKET: dict[str, tuple[int, int]] = {
+    "hot":  (0, 7),
+    "warm": (7, 60),
+    "cold": (60, 540),
+}
 
 # Campaign format distribution (sums to 1.0). sponsored_section most common.
 CAMPAIGN_FORMAT_WEIGHTS: dict[str, float] = {

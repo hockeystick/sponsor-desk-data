@@ -18,7 +18,7 @@ from pathlib import Path
 
 from faker import Faker
 
-from lib import audience, outlet
+from lib import audience, newsletter, outlet
 from lib.config import SEED
 
 ROOT: Path = Path(__file__).parent
@@ -69,6 +69,14 @@ def main() -> None:
         audience_rows = audience.build_audience_daily(rng, conn)
         audience.write_audience_daily(conn, audience_rows)
         print(f"[audience] rows: {len(audience_rows)}")
+
+        subscribers = newsletter.build_subscribers(rng)
+        newsletter.write_subscribers(conn, subscribers)
+        print(f"[newsletter] subscribers: {len(subscribers)}")
+
+        sends = newsletter.build_sends(rng, subscribers)
+        newsletter.write_sends(conn, sends)
+        print(f"[newsletter] sends: {len(sends)}")
 
         conn.commit()
     finally:
