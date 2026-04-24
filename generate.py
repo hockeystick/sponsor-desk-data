@@ -12,13 +12,14 @@ No datetime.now() in data paths. No network calls. Single seed per run.
 """
 from __future__ import annotations
 
+import hashlib
 import random
 import sqlite3
 from pathlib import Path
 
 from faker import Faker
 
-from lib import audience, campaigns, newsletter, outlet, sponsors
+from lib import audience, campaigns, csv_export, newsletter, outlet, sponsors, verify
 from lib.config import SEED
 
 ROOT: Path = Path(__file__).parent
@@ -48,6 +49,17 @@ def main() -> None:
     rng = random.Random(SEED)
     fake = Faker("es_CO")
     fake.seed_instance(SEED)
+
+    # Clean up prior artefacts so we never mix a half-regenerated run.
+    if SQLITE_PATH.exists():
+        SQLITE_PATH.unlink()
+    for csv_file in CSV_DIR.glob("*.csv"):
+        csv_file.unlink()
+    for md in SPONSORS_DIR.rglob("*.md"):
+        md.unlink()
+    checksums_path = DATA_DIR / "CHECKSUMS.txt"
+    if checksums_path.exists():
+        checksums_path.unlink()
 
     conn = _fresh_sqlite()
     try:
@@ -92,11 +104,45 @@ def main() -> None:
         print(f"[campaigns] pricing_reference.md written")
 
         conn.commit()
+
+        # Post-generation verification. Fails loud if any invariant broke.
+        verify.run(conn)
+
+        # CSV export mirrors each table to data/csv/.
+        csv_counts = csv_export.export_all(conn, CSV_DIR)
+        print(f"\n[csv] wrote {sum(csv_counts.values()):,} rows across "
+              f"{len(csv_counts)} files")
     finally:
         conn.close()
 
     n_sponsor_files = sponsors.write_all_sponsors(rng, SPONSORS_DIR)
     print(f"[sponsors] files written: {n_sponsor_files}")
+
+    _write_checksums()
+    print(f"[checksums] wrote {checksums_path.name}")
+
+
+def _write_checksums() -> None:
+    """SHA256 every generated artefact into data/CHECKSUMS.txt.
+
+    Two consecutive `uv run generate.py` invocations must produce an
+    identical CHECKSUMS.txt. Covers: labrujula.sqlite, every CSV,
+    pricing_reference.md, every sponsor markdown.
+    """
+    targets: list[Path] = [SQLITE_PATH]
+    targets.extend(sorted(CSV_DIR.glob("*.csv")))
+    targets.append(DATA_DIR / "pricing_reference.md")
+    targets.extend(sorted(SPONSORS_DIR.rglob("*.md")))
+
+    lines: list[str] = []
+    for p in targets:
+        if not p.exists():
+            continue
+        digest = hashlib.sha256(p.read_bytes()).hexdigest()
+        rel = p.relative_to(ROOT)
+        lines.append(f"{digest}  {rel}")
+
+    (DATA_DIR / "CHECKSUMS.txt").write_text("\n".join(lines) + "\n")
 
 
 if __name__ == "__main__":

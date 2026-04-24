@@ -22,10 +22,28 @@ All output is driven by a single `SEED` in `lib/config.py`. No `datetime.now()`,
 ### Determinism proof
 
 ```
-uv run generate.py && cp data/CHECKSUMS.txt /tmp/c1
 uv run generate.py
-diff /tmp/c1 data/CHECKSUMS.txt   # must be empty
+cp data/CHECKSUMS.txt /tmp/c1
+uv run generate.py
+diff /tmp/c1 data/CHECKSUMS.txt   # must be empty → "FULLY DETERMINISTIC"
 ```
+
+A non-empty diff means some generator introduced non-determinism —
+usually via dict iteration order, unseeded randomness, or a
+datetime.now() call that crept in.
+
+### Verification
+
+The generator runs 17 consistency checks after every pass and aborts
+on any failure. The checks cover:
+
+- Row-count ranges per table
+- `sum(pageviews) / sum(sessions)` ratio in [0.80, 0.95]
+- Foreign-key integrity (articles→authors, pageviews_daily→articles)
+- Every `campaign_articles` row falls within its campaign's date window
+- `sponsor_tag` propagated consistently from campaign to linked articles
+- Every newsletter send's `recipients` ≤ eligible-subscriber count at send date
+- Per-newsletter open rates remain inside the configured band
 
 ## Tuning
 

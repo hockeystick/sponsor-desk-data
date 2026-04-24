@@ -1,0 +1,732 @@
+send_id,newsletter,send_date,subject_line_es,recipients,opens,unique_opens,clicks,unique_clicks,unsubscribes
+1,diario,2024-01-01,Diario: elecciones locales,21489,6790,6373,1261,1152,37
+2,diario,2024-01-02,Diario: el metro ligero,21500,7077,6653,1076,947,25
+3,diario,2024-01-03,Un vistazo al país — Corte Constitucional,21508,7000,6643,1005,882,32
+4,diario,2024-01-04,El resumen del día,21517,6182,5871,1482,1322,52
+5,verde,2024-01-04,Verde: sequía en La Guajira,8216,3499,3166,971,885,6
+6,diario,2024-01-05,Hoy en La Brújula: paro camionero,21525,7015,6473,1549,1399,32
+7,sobremesa,2024-01-06,La mesa de Sobremesa,14918,5568,5151,1336,1223,23
+8,diario,2024-01-08,Hoy en portada — POT de Medellín,21549,6922,6594,1218,1113,25
+9,diario,2024-01-09,Hoy en La Brújula: Hidroituango,21557,6798,6421,1425,1292,47
+10,diario,2024-01-10,La mañana en Colombia: Corte Constitucional,21565,6504,6159,1600,1441,30
+11,diario,2024-01-11,Tu resumen del jueves,21574,6182,5596,1102,979,21
+12,verde,2024-01-11,Verde: contaminación del río Medellín,8235,3834,3637,1064,948,3
+13,diario,2024-01-12,El resumen del día,21581,6711,6137,1374,1235,34
+14,sobremesa,2024-01-13,"Café, comida y cultura: la lechona tolimense",14957,5535,5190,948,842,23
+15,diario,2024-01-15,El resumen del día,21604,7027,6481,1331,1180,28
+16,diario,2024-01-16,Un vistazo al país — presupuesto nacional,21617,6940,6270,1106,1013,35
+17,diario,2024-01-17,El resumen del día,21632,6937,6471,1135,984,43
+18,diario,2024-01-18,Diario: elecciones locales,21641,7208,6667,1470,1304,45
+19,verde,2024-01-18,Esta semana en biodiversidad,8268,3839,3466,800,691,7
+20,diario,2024-01-19,Cinco historias para hoy,21654,6915,6380,1567,1402,42
+21,sobremesa,2024-01-20,Para el fin de semana: Gesha del Huila,15005,5928,5345,1276,1101,20
+22,diario,2024-01-22,Diario: Hidroituango,21683,6096,5515,1331,1151,45
+23,diario,2024-01-23,Hoy en La Brújula: la consulta popular,21690,7536,7100,1415,1261,25
+24,diario,2024-01-24,Hoy en portada — la agenda del Congreso,21706,6889,6491,1063,923,48
+25,diario,2024-01-25,Hoy en portada — reforma a la salud,21717,6809,6444,1294,1120,52
+26,verde,2024-01-25,Lo urgente en clima: la COP de Medellín,8305,3575,3270,842,758,5
+27,diario,2024-01-26,Hoy en La Brújula: POT de Medellín,21729,6369,6090,1585,1440,26
+28,sobremesa,2024-01-27,Lo que está pasando en la cocina colombiana,15049,5784,5405,1164,1022,14
+29,diario,2024-01-29,Tu resumen del lunes,21761,6353,5916,1307,1140,27
+30,diario,2024-01-30,Tu resumen del martes,21772,6371,5760,1263,1143,38
+31,diario,2024-01-31,Cinco historias para hoy,21784,6920,6458,1078,988,38
+32,diario,2024-02-01,Cinco historias para hoy,21791,7317,6967,1044,944,39
+33,verde,2024-02-01,Alerta verde — la COP de Medellín,8331,3820,3633,985,900,7
+34,diario,2024-02-02,Cinco historias para hoy,21803,7359,6999,1240,1069,23
+35,sobremesa,2024-02-03,"Café, comida y cultura: Bourbon Rosado",15099,5808,5441,884,777,25
+36,diario,2024-02-05,Diario: Hidroituango,21825,6546,5972,1514,1366,35
+37,diario,2024-02-06,Cinco historias para hoy,21835,7628,6877,1399,1275,54
+38,diario,2024-02-07,Lo que debes leer hoy en Colombia,21841,6324,5957,1620,1450,52
+39,diario,2024-02-08,Hoy en La Brújula: paro camionero,21846,6954,6415,991,863,25
+40,verde,2024-02-08,Una semana en la crisis climática,8355,3997,3722,995,863,5
+41,diario,2024-02-09,Diario: Hidroituango,21855,7021,6587,1482,1308,31
+42,sobremesa,2024-02-10,Para el fin de semana: los festivales de diciembre,15149,6019,5482,1156,1054,13
+43,diario,2024-02-12,Buenas tardes desde Medellín,21891,7382,6759,1312,1160,54
+44,diario,2024-02-13,La mañana en Colombia: la consulta popular,21900,7654,6970,1404,1272,25
+45,diario,2024-02-14,Buenas tardes desde Medellín,21907,6402,6132,990,898,47
+46,diario,2024-02-15,Tu resumen del jueves,21916,7463,6900,1219,1050,32
+47,verde,2024-02-15,La semana del clima: transición energética,8377,3897,3607,951,853,6
+48,diario,2024-02-16,El resumen del día,21927,6578,6294,1559,1381,48
+49,sobremesa,2024-02-17,La mesa de Sobremesa,15196,5938,5543,1295,1155,20
+50,diario,2024-02-19,Hoy en portada — elecciones locales,21956,6241,5946,1300,1120,53
+51,diario,2024-02-20,Lo que debes leer hoy en Colombia,21968,6836,6323,1120,1006,49
+52,diario,2024-02-21,Lo que debes leer hoy en Colombia,21981,7417,6682,1575,1417,38
+53,diario,2024-02-22,Diario: el metro ligero,21997,6563,6235,1032,938,28
+54,verde,2024-02-22,La semana del clima: la crisis del agua en Bogotá,8402,3863,3654,1025,893,7
+55,diario,2024-02-23,Hoy en portada — presupuesto nacional,22009,7606,7117,1176,1038,53
+56,sobremesa,2024-02-24,Lo que está pasando en la cocina colombiana,15248,5617,5365,905,783,15
+57,diario,2024-02-26,Lo que debes leer hoy en Colombia,22038,6864,6243,1372,1238,35
+58,diario,2024-02-27,Diario: la consulta popular,22046,6266,5876,1080,991,33
+59,diario,2024-02-28,Lo que debes leer hoy en Colombia,22053,6885,6593,1625,1456,44
+60,diario,2024-02-29,Lo que debes leer hoy en Colombia,22063,6996,6570,1041,914,40
+61,verde,2024-02-29,Verde: proyecto Quebradona,8425,3729,3542,992,899,8
+62,diario,2024-03-01,Tu resumen del viernes,22067,7417,6749,1363,1212,50
+63,sobremesa,2024-03-02,Lo que está pasando en la cocina colombiana,15299,5903,5631,1348,1231,29
+64,diario,2024-03-04,Hoy en portada — elecciones locales,22097,6567,6199,1095,996,46
+65,diario,2024-03-05,Lo que debes leer hoy en Colombia,22104,6250,5679,1419,1264,30
+66,diario,2024-03-06,Un vistazo al país — la consulta popular,22121,7692,7311,1316,1150,30
+67,diario,2024-03-07,Un vistazo al país — POT de Medellín,22134,6987,6626,1221,1077,51
+68,verde,2024-03-07,El balance ambiental de la semana,8452,3725,3514,844,733,9
+69,diario,2024-03-08,Buenas tardes desde Medellín,22148,7562,6953,1168,1073,42
+70,sobremesa,2024-03-09,La mesa de Sobremesa,15341,5238,4730,1305,1183,22
+71,diario,2024-03-11,Tu resumen del lunes,22178,7097,6646,1132,1016,30
+72,diario,2024-03-12,Tu resumen del martes,22188,7012,6461,1574,1422,44
+73,diario,2024-03-13,Buenas tardes desde Medellín,22193,6266,5729,1194,1094,50
+74,diario,2024-03-14,Diario: presupuesto nacional,22203,6298,6015,1145,1041,52
+75,verde,2024-03-14,Una semana en la crisis climática,8474,3721,3461,1035,891,7
+76,diario,2024-03-15,Un vistazo al país — reforma a la salud,22217,7554,6839,1015,893,33
+77,sobremesa,2024-03-16,Lo que está pasando en la cocina colombiana,15392,5821,5447,1330,1202,21
+78,diario,2024-03-18,La mañana en Colombia: presupuesto nacional,22249,6956,6338,1208,1041,32
+79,diario,2024-03-19,Lo que debes leer hoy en Colombia,22257,6932,6285,1418,1302,38
+80,diario,2024-03-20,Tu resumen del miércoles,22267,7366,6819,1629,1455,46
+81,diario,2024-03-21,Diario: reforma a la salud,22279,6932,6578,1073,978,42
+82,verde,2024-03-21,Lo urgente en clima: contaminación del río Medellín,8496,3779,3438,924,828,3
+83,diario,2024-03-22,Un vistazo al país — reforma a la salud,22290,7435,7090,1176,1070,49
+84,sobremesa,2024-03-23,Lo que está pasando en la cocina colombiana,15435,6006,5444,1115,1001,15
+85,diario,2024-03-25,Cinco historias para hoy,22317,6636,6028,1037,898,22
+86,diario,2024-03-26,Tu resumen del martes,22332,6502,6094,1520,1313,26
+87,diario,2024-03-27,La mañana en Colombia: elecciones locales,22341,6670,6030,1519,1376,41
+88,diario,2024-03-28,Diario: reforma pensional,22352,6873,6537,1622,1491,32
+89,verde,2024-03-28,Esta semana en biodiversidad,8520,3836,3592,1054,947,4
+90,diario,2024-03-29,Hoy en La Brújula: presupuesto nacional,22361,6612,6243,1634,1498,55
+91,sobremesa,2024-03-30,Entre tazas y fogones,15478,5559,5139,1058,948,23
+92,diario,2024-04-01,Buenas tardes desde Medellín,22387,6683,6339,1494,1285,48
+93,diario,2024-04-02,Lo que debes leer hoy en Colombia,22397,6588,6099,1533,1381,40
+94,diario,2024-04-03,Hoy en portada — tarifas de EPM,22407,6343,5968,1057,950,33
+95,diario,2024-04-04,Diario: POT de Medellín,22415,7474,7029,1051,954,51
+96,verde,2024-04-04,Esta semana en biodiversidad,8544,3999,3737,1176,1069,9
+97,diario,2024-04-05,Hoy en portada — reforma pensional,22424,6701,6179,1247,1082,24
+98,sobremesa,2024-04-06,"Café, comida y cultura: Caturra del Tolima",15529,5568,5247,1027,930,19
+99,diario,2024-04-08,El resumen del día,22460,7330,6665,1301,1180,52
+100,diario,2024-04-09,Tu resumen del martes,22473,7295,6636,1648,1462,46
+101,diario,2024-04-10,Hoy en portada — Corte Constitucional,22480,6313,5965,1405,1219,50
+102,diario,2024-04-11,Hoy en La Brújula: reforma a la salud,22483,6886,6534,1668,1446,37
+103,verde,2024-04-11,Esta semana en biodiversidad,8579,3684,3438,1030,928,4
+104,diario,2024-04-12,Hoy en La Brújula: migración venezolana,22491,6703,6352,1368,1188,47
+105,sobremesa,2024-04-13,La mesa de Sobremesa,15570,5858,5493,1304,1182,30
+106,diario,2024-04-15,Hoy en portada — reforma pensional,22510,7831,7187,1212,1072,35
+107,diario,2024-04-16,La mañana en Colombia: el metro ligero,22515,7081,6712,1427,1307,49
+108,diario,2024-04-17,Buenas tardes desde Medellín,22523,7016,6346,1582,1435,37
+109,diario,2024-04-18,Hoy en portada — reforma a la salud,22535,6692,6036,1100,1005,54
+110,verde,2024-04-18,El balance ambiental de la semana,8601,4088,3710,1066,948,4
+111,diario,2024-04-19,Hoy en portada — POT de Medellín,22545,7364,7060,1591,1410,25
+112,sobremesa,2024-04-20,Sobremesa · Bourbon Rosado,15617,5491,5165,902,813,15
+113,diario,2024-04-22,El resumen del día,22570,7688,7045,1401,1210,42
+114,diario,2024-04-23,El resumen del día,22583,6400,5846,1274,1141,30
+115,diario,2024-04-24,Hoy en portada — reforma pensional,22591,7678,6943,1428,1312,44
+116,diario,2024-04-25,El resumen del día,22600,6837,6158,1485,1316,24
+117,verde,2024-04-25,La semana del clima: proyecto Quebradona,8626,3766,3614,1199,1099,9
+118,diario,2024-04-26,Hoy en La Brújula: reforma a la salud,22605,6467,6196,1160,1006,24
+119,sobremesa,2024-04-27,Entre tazas y fogones,15663,5653,5333,1348,1227,28
+120,diario,2024-04-29,El resumen del día,22633,6444,6108,1675,1495,32
+121,diario,2024-04-30,Lo que debes leer hoy en Colombia,22645,7510,6905,1535,1394,31
+122,diario,2024-05-01,Buenas tardes desde Medellín,22653,7501,7146,1025,930,30
+123,diario,2024-05-02,Diario: paro camionero,22662,6853,6496,1097,1005,48
+124,verde,2024-05-02,Esta semana en biodiversidad,8652,3861,3656,791,727,9
+125,diario,2024-05-03,Diario: presupuesto nacional,22674,7282,6562,1049,964,45
+126,sobremesa,2024-05-04,Para el fin de semana: Tabi de Nariño,15708,6027,5487,1177,1074,12
+127,diario,2024-05-06,Hoy en portada — paz total,22697,7330,6648,1076,944,55
+128,diario,2024-05-07,Buenas tardes desde Medellín,22708,7118,6437,1078,985,55
+129,diario,2024-05-08,Buenas tardes desde Medellín,22724,7198,6753,1542,1411,37
+130,diario,2024-05-09,Buenas tardes desde Medellín,22738,6730,6153,1226,1092,39
+131,verde,2024-05-09,Verde · consulta previa,8681,3739,3384,1037,912,5
+132,diario,2024-05-10,El resumen del día,22749,6445,5890,1121,1021,34
+133,sobremesa,2024-05-11,Para el fin de semana: Gesha del Huila,15754,5828,5522,903,809,17
+134,diario,2024-05-13,Hoy en La Brújula: elecciones locales,22778,7556,7187,1146,990,43
+135,diario,2024-05-14,Cinco historias para hoy,22794,6905,6224,1441,1265,53
+136,diario,2024-05-15,La mañana en Colombia: la agenda del Congreso,22802,7770,7153,1560,1407,49
+137,diario,2024-05-16,Lo que debes leer hoy en Colombia,22812,7270,6647,1434,1251,29
+138,verde,2024-05-16,Esta semana en biodiversidad,8702,3774,3518,1125,968,5
+139,diario,2024-05-17,Diario: reforma pensional,22826,7569,7016,1077,971,47
+140,sobremesa,2024-05-18,Entre tazas y fogones,15806,5455,4970,1330,1157,13
+141,diario,2024-05-20,Lo que debes leer hoy en Colombia,22862,7713,7155,1178,1041,49
+142,diario,2024-05-21,Hoy en portada — Hidroituango,22870,6533,6228,1632,1480,44
+143,diario,2024-05-22,La mañana en Colombia: tarifas de EPM,22876,6724,6266,1337,1190,54
+144,diario,2024-05-23,Diario: paro camionero,22885,7398,6754,1572,1373,53
+145,verde,2024-05-23,Una semana en la crisis climática,8731,3774,3414,975,891,5
+146,diario,2024-05-24,Un vistazo al país — paro camionero,22892,7575,7072,1135,999,29
+147,sobremesa,2024-05-25,Para el fin de semana: mercados campesinos,15854,5549,5133,1333,1149,28
+148,diario,2024-05-27,Tu resumen del lunes,22921,7607,6963,1443,1245,47
+149,diario,2024-05-28,Tu resumen del martes,22933,7273,6689,1142,989,54
+150,diario,2024-05-29,Diario: reforma pensional,22943,7149,6518,1249,1085,28
+151,diario,2024-05-30,Diario: presupuesto nacional,22951,7259,6626,1539,1360,54
+152,verde,2024-05-30,La semana del clima: transición energética,8761,4068,3716,1065,940,9
+153,diario,2024-05-31,Cinco historias para hoy,22960,7123,6519,1232,1087,42
+154,sobremesa,2024-06-01,La mesa de Sobremesa,15896,5561,5050,1192,1042,23
+155,diario,2024-06-03,Hoy en La Brújula: la consulta popular,22979,7095,6697,1566,1406,56
+156,diario,2024-06-04,Buenas tardes desde Medellín,22989,7546,6891,1341,1158,45
+157,diario,2024-06-05,Hoy en portada — el metro ligero,23005,6567,6027,1125,1010,47
+158,diario,2024-06-06,Hoy en La Brújula: Corte Constitucional,23016,7878,7150,1473,1292,47
+159,verde,2024-06-06,Verde: minería ilegal en el Chocó,8788,3898,3544,1140,1010,8
+160,diario,2024-06-07,Lo que debes leer hoy en Colombia,23023,7732,6981,1396,1214,23
+161,sobremesa,2024-06-08,Sobremesa: Caturra del Tolima,15941,6142,5671,1007,873,13
+162,diario,2024-06-10,Diario: migración venezolana,23046,6726,6157,1657,1523,26
+163,diario,2024-06-11,El resumen del día,23056,7577,7272,1309,1148,42
+164,diario,2024-06-12,Buenas tardes desde Medellín,23067,8036,7601,1190,1032,50
+165,diario,2024-06-13,Diario: el metro ligero,23075,7144,6793,1534,1391,53
+166,verde,2024-06-13,Lo urgente en clima: la crisis del agua en Bogotá,8814,3804,3571,1025,904,8
+167,diario,2024-06-14,Un vistazo al país — paz total,23086,6816,6144,1502,1335,55
+168,sobremesa,2024-06-15,Lo que está pasando en la cocina colombiana,15988,5875,5392,1278,1128,24
+169,diario,2024-06-17,Diario: Corte Constitucional,23105,7563,6824,1707,1521,47
+170,diario,2024-06-18,Buenas tardes desde Medellín,23116,7661,7287,1654,1510,28
+171,diario,2024-06-19,Buenas tardes desde Medellín,23125,6781,6247,1117,975,33
+172,diario,2024-06-20,Hoy en La Brújula: reforma a la salud,23136,7887,7135,1214,1100,38
+173,verde,2024-06-20,Lo urgente en clima: contaminación del río Medellín,8840,4053,3789,924,828,8
+174,diario,2024-06-21,El resumen del día,23146,6552,5988,1161,1031,50
+175,sobremesa,2024-06-22,Para el fin de semana: la bandeja paisa,16045,5682,5139,1412,1296,13
+176,diario,2024-06-24,Diario: reforma pensional,23180,7870,7420,1272,1101,33
+177,diario,2024-06-25,Cinco historias para hoy,23192,6603,6209,1621,1464,57
+178,diario,2024-06-26,Lo que debes leer hoy en Colombia,23200,6972,6676,1705,1479,33
+179,diario,2024-06-27,Hoy en portada — presupuesto nacional,23208,7331,7029,1157,1013,31
+180,verde,2024-06-27,La semana del clima: la COP de Medellín,8877,4117,3838,864,749,3
+181,diario,2024-06-28,Cinco historias para hoy,23216,7385,6765,1399,1279,53
+182,sobremesa,2024-06-29,Para el fin de semana: la lechona tolimense,16090,6033,5699,1298,1157,29
+183,diario,2024-07-01,La mañana en Colombia: reforma a la salud,23238,7073,6697,1565,1366,28
+184,diario,2024-07-02,Hoy en portada — paz total,23245,7539,7079,1452,1306,51
+185,diario,2024-07-03,Hoy en La Brújula: presupuesto nacional,23256,6780,6223,1118,1009,41
+186,diario,2024-07-04,Diario: Corte Constitucional,23265,7090,6639,1713,1531,56
+187,verde,2024-07-04,La semana del clima: minería ilegal en el Chocó,8896,4021,3836,1162,1027,4
+188,diario,2024-07-05,Cinco historias para hoy,23279,7035,6631,1336,1167,30
+189,sobremesa,2024-07-06,"Café, comida y cultura: Caturra del Tolima",16132,6247,5689,1018,918,24
+190,diario,2024-07-08,Lo que debes leer hoy en Colombia,23305,7628,7317,1287,1175,31
+191,diario,2024-07-09,Diario: POT de Medellín,23319,6996,6338,1245,1081,45
+192,diario,2024-07-10,Buenas tardes desde Medellín,23326,6607,6188,1189,1037,44
+193,diario,2024-07-11,El resumen del día,23336,7340,6700,1176,1041,43
+194,verde,2024-07-11,Una semana en la crisis climática,8926,4090,3880,925,832,5
+195,diario,2024-07-12,Hoy en portada — migración venezolana,23351,7561,7252,1075,966,40
+196,sobremesa,2024-07-13,"Café, comida y cultura: nuevos baristas de Medellín",16186,5840,5521,1153,1058,26
+197,diario,2024-07-15,Hoy en portada — la consulta popular,23385,7023,6531,1630,1489,30
+198,diario,2024-07-16,Tu resumen del martes,23391,8024,7384,1734,1532,52
+199,diario,2024-07-17,Diario: paz total,23402,7970,7460,1426,1257,37
+200,diario,2024-07-18,Hoy en La Brújula: tarifas de EPM,23412,7170,6788,1322,1199,53
+201,verde,2024-07-18,Alerta verde — deforestación en la Amazonía,8953,4124,3822,871,752,9
+202,diario,2024-07-19,Diario: elecciones locales,23418,7855,7343,1641,1418,58
+203,sobremesa,2024-07-20,"Café, comida y cultura: las arepas del Valle de Aburrá",16234,5619,5385,1110,996,25
+204,diario,2024-07-22,Hoy en La Brújula: tarifas de EPM,23446,7719,7208,1555,1374,31
+205,diario,2024-07-23,Tu resumen del martes,23451,6682,6021,1427,1253,38
+206,diario,2024-07-24,El resumen del día,23460,6734,6379,1676,1513,41
+207,diario,2024-07-25,Buenas tardes desde Medellín,23477,8086,7423,1377,1237,27
+208,verde,2024-07-25,El balance ambiental de la semana,8975,4172,3962,1243,1091,9
+209,diario,2024-07-26,Tu resumen del viernes,23485,7851,7523,1713,1546,51
+210,sobremesa,2024-07-27,Entre tazas y fogones,16278,5828,5249,1202,1063,23
+211,diario,2024-07-29,Hoy en La Brújula: reforma pensional,23520,7082,6691,1059,971,39
+212,diario,2024-07-30,Hoy en portada — paro camionero,23531,6603,5952,1400,1246,29
+213,diario,2024-07-31,Un vistazo al país — reforma pensional,23536,7511,7201,1163,1044,32
+214,diario,2024-08-01,Hoy en portada — migración venezolana,23543,7359,6681,1147,1039,45
+215,verde,2024-08-01,El balance ambiental de la semana,9002,4090,3856,1231,1083,8
+216,diario,2024-08-02,Hoy en La Brújula: Hidroituango,23546,7446,6768,1652,1515,31
+217,sobremesa,2024-08-03,Para el fin de semana: la bandeja paisa,16310,6327,5908,1026,892,13
+218,diario,2024-08-05,Buenas tardes desde Medellín,23570,7826,7154,1218,1056,30
+219,diario,2024-08-06,Cinco historias para hoy,23581,8098,7451,1128,1037,51
+220,diario,2024-08-07,Hoy en portada — la consulta popular,23588,8084,7355,1144,1032,25
+221,diario,2024-08-08,Un vistazo al país — reforma a la salud,23599,7548,6955,1220,1075,24
+222,verde,2024-08-08,Esta semana en biodiversidad,9027,4072,3881,1261,1144,8
+223,diario,2024-08-09,Lo que debes leer hoy en Colombia,23606,7332,6906,1437,1242,34
+224,sobremesa,2024-08-10,La mesa de Sobremesa,16353,6132,5815,1063,952,20
+225,diario,2024-08-12,Diario: reforma a la salud,23635,7118,6502,1277,1155,57
+226,diario,2024-08-13,Diario: reforma pensional,23649,7542,6915,1221,1052,33
+227,diario,2024-08-14,Lo que debes leer hoy en Colombia,23653,7038,6472,1193,1044,34
+228,diario,2024-08-15,Buenas tardes desde Medellín,23663,8244,7590,1642,1429,40
+229,verde,2024-08-15,Una semana en la crisis climática,9061,3893,3668,1062,915,9
+230,diario,2024-08-16,Lo que debes leer hoy en Colombia,23678,7852,7107,1771,1566,30
+231,sobremesa,2024-08-17,Entre tazas y fogones,16394,5939,5557,1221,1070,29
+232,diario,2024-08-19,Hoy en portada — Corte Constitucional,23701,7180,6703,1100,969,31
+233,diario,2024-08-20,Hoy en La Brújula: paz total,23712,6768,6179,1137,1004,50
+234,diario,2024-08-21,Hoy en portada — presupuesto nacional,23718,7996,7570,1318,1200,33
+235,diario,2024-08-22,Un vistazo al país — paro camionero,23726,7562,6823,1573,1368,40
+236,verde,2024-08-22,Alerta verde — la COP de Medellín,9083,4127,3846,912,805,7
+237,diario,2024-08-23,Hoy en portada — reforma pensional,23736,6948,6418,1340,1212,44
+238,sobremesa,2024-08-24,"Café, comida y cultura: las arepas del Valle de Aburrá",16433,6304,5767,1462,1308,28
+239,diario,2024-08-26,La mañana en Colombia: migración venezolana,23773,6897,6494,1191,1031,57
+240,diario,2024-08-27,Hoy en La Brújula: presupuesto nacional,23783,7648,7128,1295,1179,48
+241,diario,2024-08-28,Cinco historias para hoy,23796,7415,6684,1574,1425,58
+242,diario,2024-08-29,Hoy en portada — paro camionero,23808,7750,7123,1772,1607,51
+243,verde,2024-08-29,Verde · biodiversidad en el Pacífico,9109,3939,3653,1099,957,8
+244,diario,2024-08-30,Buenas tardes desde Medellín,23819,7445,6800,1692,1496,35
+245,sobremesa,2024-08-31,Sobremesa · Caturra del Tolima,16491,6529,6196,1427,1279,18
+246,diario,2024-09-02,Cinco historias para hoy,23849,7751,7370,1638,1412,29
+247,diario,2024-09-03,La mañana en Colombia: elecciones locales,23867,6834,6448,1443,1245,30
+248,diario,2024-09-04,Hoy en portada — reforma pensional,23876,7527,7129,1261,1096,54
+249,diario,2024-09-05,Hoy en portada — el metro ligero,23885,6995,6493,1124,1025,34
+250,verde,2024-09-05,El balance ambiental de la semana,9140,4248,3906,969,838,8
+251,diario,2024-09-06,Un vistazo al país — paro camionero,23892,7256,6751,1350,1186,31
+252,sobremesa,2024-09-07,Sobremesa · las arepas del Valle de Aburrá,16546,6053,5725,1117,1003,27
+253,diario,2024-09-09,Hoy en portada — Corte Constitucional,23920,8241,7883,1360,1196,54
+254,diario,2024-09-10,Lo que debes leer hoy en Colombia,23929,7711,7215,1418,1266,35
+255,diario,2024-09-11,Tu resumen del miércoles,23939,7330,6929,1178,1064,51
+256,diario,2024-09-12,Tu resumen del jueves,23952,7608,6932,1726,1537,33
+257,verde,2024-09-12,Una semana en la crisis climática,9167,3964,3776,1187,1064,7
+258,diario,2024-09-13,Buenas tardes desde Medellín,23967,7423,6796,1792,1592,27
+259,sobremesa,2024-09-14,Sobremesa · Gesha del Huila,16599,5954,5556,1338,1212,27
+260,diario,2024-09-16,Un vistazo al país — migración venezolana,23995,6734,6160,1569,1374,52
+261,diario,2024-09-17,Buenas tardes desde Medellín,24004,6993,6540,1336,1219,29
+262,diario,2024-09-18,Un vistazo al país — Corte Constitucional,24015,7034,6613,1327,1201,52
+263,diario,2024-09-19,Lo que debes leer hoy en Colombia,24028,7454,6895,1211,1090,47
+264,verde,2024-09-19,Verde · proyecto Quebradona,9198,4154,3758,1242,1099,6
+265,diario,2024-09-20,La mañana en Colombia: Corte Constitucional,24031,7539,7040,1594,1419,48
+266,sobremesa,2024-09-21,Para el fin de semana: Caturra del Tolima,16644,6157,5745,1309,1185,15
+267,diario,2024-09-23,El resumen del día,24063,8037,7283,1700,1496,42
+268,diario,2024-09-24,Buenas tardes desde Medellín,24070,7310,6946,1545,1346,44
+269,diario,2024-09-25,Hoy en La Brújula: tarifas de EPM,24075,7018,6559,1207,1095,27
+270,diario,2024-09-26,Un vistazo al país — elecciones locales,24088,7382,6683,1774,1591,26
+271,verde,2024-09-26,Lo urgente en clima: transición energética,9221,3903,3696,885,768,9
+272,diario,2024-09-27,La mañana en Colombia: elecciones locales,24094,8359,7942,1282,1123,35
+273,sobremesa,2024-09-28,Sobremesa: las arepas del Valle de Aburrá,16698,6462,6096,1057,954,16
+274,diario,2024-09-30,Diario: reforma a la salud,24123,6937,6385,1487,1335,24
+275,diario,2024-10-01,Tu resumen del martes,24134,7620,7255,1563,1383,25
+276,diario,2024-10-02,Tu resumen del miércoles,24139,7122,6446,1362,1203,38
+277,diario,2024-10-03,Un vistazo al país — la agenda del Congreso,24151,7449,6704,1288,1151,36
+278,verde,2024-10-03,Una semana en la crisis climática,9248,4190,3780,923,814,9
+279,diario,2024-10-04,La mañana en Colombia: la consulta popular,24160,8044,7643,1567,1369,29
+280,sobremesa,2024-10-05,Sobremesa: Gesha del Huila,16753,6254,5710,1333,1155,14
+281,diario,2024-10-07,El resumen del día,24188,7521,7209,1385,1263,44
+282,diario,2024-10-08,Lo que debes leer hoy en Colombia,24199,6844,6241,1534,1386,57
+283,diario,2024-10-09,Cinco historias para hoy,24207,7984,7314,1470,1319,29
+284,diario,2024-10-10,Lo que debes leer hoy en Colombia,24215,8472,7989,1104,1013,27
+285,verde,2024-10-10,Verde: biodiversidad en el Pacífico,9277,3946,3628,1272,1151,10
+286,diario,2024-10-11,Buenas tardes desde Medellín,24223,7425,7031,1553,1353,55
+287,sobremesa,2024-10-12,Entre tazas y fogones,16796,5844,5413,1482,1295,26
+288,diario,2024-10-14,Buenas tardes desde Medellín,24255,7543,6834,1383,1198,35
+289,diario,2024-10-15,Un vistazo al país — paro camionero,24267,8177,7744,1769,1614,28
+290,diario,2024-10-16,Diario: migración venezolana,24279,7376,6679,1365,1196,27
+291,diario,2024-10-17,El resumen del día,24290,8271,7671,1561,1393,54
+292,verde,2024-10-17,Alerta verde — consulta previa,9301,4180,4004,942,855,6
+293,diario,2024-10-18,Un vistazo al país — reforma a la salud,24304,7850,7101,1345,1187,56
+294,sobremesa,2024-10-19,Para el fin de semana: mercados campesinos,16842,6474,6201,1312,1159,22
+295,diario,2024-10-21,Lo que debes leer hoy en Colombia,24336,7403,6745,1728,1534,25
+296,diario,2024-10-22,La mañana en Colombia: migración venezolana,24348,8159,7643,1656,1443,59
+297,diario,2024-10-23,Hoy en portada — el metro ligero,24354,7965,7593,1636,1488,59
+298,diario,2024-10-24,La mañana en Colombia: Corte Constitucional,24360,7925,7471,1358,1222,30
+299,verde,2024-10-24,Alerta verde — transición energética,9325,4167,3917,1085,978,5
+300,diario,2024-10-25,Buenas tardes desde Medellín,24368,6904,6598,1434,1295,55
+301,sobremesa,2024-10-26,"Café, comida y cultura: Bourbon Rosado",16878,6375,5873,1072,930,32
+302,diario,2024-10-28,Cinco historias para hoy,24398,7185,6753,1186,1033,31
+303,diario,2024-10-29,Diario: reforma pensional,24407,6942,6331,1812,1573,32
+304,diario,2024-10-30,Hoy en La Brújula: la agenda del Congreso,24415,7078,6514,1291,1138,26
+305,diario,2024-10-31,Hoy en La Brújula: Corte Constitucional,24428,8184,7853,1121,1028,50
+306,verde,2024-10-31,Lo urgente en clima: los páramos de Santurbán,9352,4288,3896,888,768,9
+307,diario,2024-11-01,Diario: Hidroituango,24435,8238,7596,1743,1502,52
+308,sobremesa,2024-11-02,Esta semana probamos: la bandeja paisa,16926,6112,5646,1209,1091,15
+309,diario,2024-11-04,Tu resumen del lunes,24456,7230,6862,1176,1080,42
+310,diario,2024-11-05,Cinco historias para hoy,24463,8444,8032,1609,1393,27
+311,diario,2024-11-06,Hoy en portada — Hidroituango,24471,8252,7769,1611,1397,36
+312,diario,2024-11-07,Tu resumen del jueves,24487,7117,6799,1785,1588,54
+313,verde,2024-11-07,El balance ambiental de la semana,9379,4075,3788,1090,968,9
+314,diario,2024-11-08,Diario: elecciones locales,24496,6923,6311,1332,1182,53
+315,sobremesa,2024-11-09,Lo que está pasando en la cocina colombiana,16972,6432,6081,946,839,23
+316,diario,2024-11-11,Buenas tardes desde Medellín,24526,8119,7578,1799,1644,59
+317,diario,2024-11-12,Hoy en portada — paz total,24537,8337,7927,1617,1418,46
+318,diario,2024-11-13,Hoy en La Brújula: Corte Constitucional,24546,7141,6701,1476,1290,55
+319,diario,2024-11-14,Un vistazo al país — elecciones locales,24555,7518,6876,1303,1152,29
+320,verde,2024-11-14,Esta semana en biodiversidad,9404,4345,4098,867,778,5
+321,diario,2024-11-15,El resumen del día,24565,8197,7413,1688,1466,54
+322,sobremesa,2024-11-16,La mesa de Sobremesa,17010,5807,5494,1498,1369,31
+323,diario,2024-11-18,Hoy en La Brújula: la agenda del Congreso,24595,7644,7160,1767,1608,31
+324,diario,2024-11-19,Tu resumen del martes,24601,7538,6922,1351,1169,25
+325,diario,2024-11-20,Hoy en La Brújula: elecciones locales,24609,7534,6994,1679,1492,28
+326,diario,2024-11-21,Diario: reforma a la salud,24625,7309,6712,1775,1532,61
+327,verde,2024-11-21,El balance ambiental de la semana,9434,4332,4117,966,874,5
+328,diario,2024-11-22,Buenas tardes desde Medellín,24635,6978,6541,1535,1372,29
+329,sobremesa,2024-11-23,Esta semana probamos: Tabi de Nariño,17054,6173,5712,1131,1036,24
+330,diario,2024-11-25,Hoy en La Brújula: reforma a la salud,24662,8272,7894,1536,1375,39
+331,diario,2024-11-26,El resumen del día,24673,7480,6829,1365,1246,47
+332,diario,2024-11-27,Un vistazo al país — presupuesto nacional,24685,7968,7332,1780,1609,48
+333,diario,2024-11-28,Lo que debes leer hoy en Colombia,24692,7096,6441,1268,1108,33
+334,verde,2024-11-28,Una semana en la crisis climática,9445,4344,4052,930,847,11
+335,diario,2024-11-29,Hoy en La Brújula: la consulta popular,24704,8069,7331,1625,1400,35
+336,sobremesa,2024-11-30,Entre tazas y fogones,17095,6139,5805,1405,1214,17
+337,diario,2024-12-02,La mañana en Colombia: Corte Constitucional,24736,7561,6832,1748,1544,58
+338,diario,2024-12-03,Buenas tardes desde Medellín,24747,8084,7494,1211,1051,40
+339,diario,2024-12-04,La mañana en Colombia: POT de Medellín,24764,7346,6692,1749,1587,37
+340,diario,2024-12-05,La mañana en Colombia: la consulta popular,24772,8314,7669,1754,1572,32
+341,verde,2024-12-05,Esta semana en biodiversidad,9468,4198,3807,1105,1014,10
+342,diario,2024-12-06,Hoy en portada — reforma a la salud,24780,8622,8129,1694,1458,29
+343,sobremesa,2024-12-07,Sobremesa · nuevos baristas de Medellín,17152,5859,5500,1076,954,27
+344,diario,2024-12-09,Hoy en portada — la consulta popular,24818,7832,7084,1620,1464,40
+345,diario,2024-12-10,La mañana en Colombia: Corte Constitucional,24825,8188,7596,1260,1104,44
+346,diario,2024-12-11,Un vistazo al país — Corte Constitucional,24836,7901,7202,1237,1078,26
+347,diario,2024-12-12,La mañana en Colombia: reforma a la salud,24848,8539,7760,1689,1486,46
+348,verde,2024-12-12,Esta semana en biodiversidad,9497,4023,3803,1167,1069,10
+349,diario,2024-12-13,Lo que debes leer hoy en Colombia,24861,8196,7577,1563,1368,27
+350,sobremesa,2024-12-14,Sobremesa · mercados campesinos,17209,6310,5942,1417,1220,26
+351,diario,2024-12-16,Tu resumen del lunes,24897,7064,6708,1569,1383,38
+352,diario,2024-12-17,El resumen del día,24908,7766,7058,1770,1530,43
+353,diario,2024-12-18,Buenas tardes desde Medellín,24918,8029,7298,1290,1143,28
+354,diario,2024-12-19,Lo que debes leer hoy en Colombia,24925,8350,7606,1231,1095,61
+355,verde,2024-12-19,Verde: ríos contaminados de Antioquia,9524,4005,3652,928,805,4
+356,diario,2024-12-20,Diario: la agenda del Congreso,24937,8155,7695,1845,1657,28
+357,sobremesa,2024-12-21,Para el fin de semana: nuevos baristas de Medellín,17263,6203,5885,1428,1286,19
+358,diario,2024-12-23,Tu resumen del lunes,24965,8073,7360,1675,1448,26
+359,diario,2024-12-24,Cinco historias para hoy,24977,8224,7800,1596,1462,33
+360,diario,2024-12-25,Tu resumen del miércoles,24987,7171,6866,1384,1197,36
+361,diario,2024-12-26,Tu resumen del jueves,24993,8217,7424,1771,1591,53
+362,verde,2024-12-26,Una semana en la crisis climática,9549,4482,4055,889,815,3
+363,diario,2024-12-27,Cinco historias para hoy,25001,8497,7846,1777,1551,31
+364,sobremesa,2024-12-28,"Café, comida y cultura: la bandeja paisa",17299,6660,6163,1157,1057,23
+365,diario,2024-12-30,El resumen del día,25025,7212,6522,1212,1107,43
+366,diario,2024-12-31,Hoy en La Brújula: presupuesto nacional,25025,7136,6775,1564,1368,51
+367,diario,2025-01-01,Tu resumen del miércoles,25031,7258,6556,1671,1497,33
+368,diario,2025-01-02,El resumen del día,25040,8444,7748,1492,1313,52
+369,verde,2025-01-02,Una semana en la crisis climática,9567,4159,3878,956,868,7
+370,diario,2025-01-03,Lo que debes leer hoy en Colombia,25049,7322,6636,1220,1072,52
+371,sobremesa,2025-01-04,Para el fin de semana: Bourbon Rosado,17335,6416,5985,1084,967,27
+372,diario,2025-01-06,Diario: paro camionero,25080,7281,6641,1379,1202,57
+373,diario,2025-01-07,El resumen del día,25087,8139,7462,1775,1532,61
+374,diario,2025-01-08,Diario: migración venezolana,25093,8506,7882,1759,1606,45
+375,diario,2025-01-09,La mañana en Colombia: el metro ligero,25099,7312,6640,1156,1025,26
+376,verde,2025-01-09,Verde · biodiversidad en el Pacífico,9588,4136,3827,1157,1058,7
+377,diario,2025-01-10,Diario: migración venezolana,25104,8208,7682,1514,1319,43
+378,sobremesa,2025-01-11,La mesa de Sobremesa,17377,6070,5634,1343,1224,16
+379,diario,2025-01-13,Hoy en portada — paro camionero,25125,7079,6770,1658,1495,41
+380,diario,2025-01-14,El resumen del día,25133,7923,7219,1667,1514,41
+381,diario,2025-01-15,Un vistazo al país — reforma pensional,25139,7609,6998,1218,1100,50
+382,diario,2025-01-16,Un vistazo al país — presupuesto nacional,25146,7503,6997,1856,1677,36
+383,verde,2025-01-16,Una semana en la crisis climática,9614,4489,4130,923,842,4
+384,diario,2025-01-17,La mañana en Colombia: la consulta popular,25153,8603,8055,1216,1113,36
+385,sobremesa,2025-01-18,Entre tazas y fogones,17404,6128,5537,1080,960,34
+386,diario,2025-01-20,Hoy en La Brújula: Corte Constitucional,25176,8298,7638,1419,1261,46
+387,diario,2025-01-21,Diario: tarifas de EPM,25181,7618,7004,1481,1278,60
+388,diario,2025-01-22,La mañana en Colombia: paz total,25189,7083,6424,1850,1614,37
+389,diario,2025-01-23,Lo que debes leer hoy en Colombia,25197,8117,7711,1441,1296,54
+390,verde,2025-01-23,Verde: la COP de Medellín,9627,4340,4075,1110,981,10
+391,diario,2025-01-24,Lo que debes leer hoy en Colombia,25205,7629,7006,1809,1602,52
+392,sobremesa,2025-01-25,La mesa de Sobremesa,17441,6767,6218,1417,1275,22
+393,diario,2025-01-27,Cinco historias para hoy,25230,8004,7452,1173,1072,28
+394,diario,2025-01-28,Cinco historias para hoy,25237,7454,6881,1334,1162,51
+395,diario,2025-01-29,Hoy en La Brújula: la consulta popular,25245,8089,7547,1747,1534,44
+396,diario,2025-01-30,Hoy en La Brújula: tarifas de EPM,25251,7525,7082,1827,1599,54
+397,verde,2025-01-30,Esta semana en biodiversidad,9644,4140,3808,1061,925,7
+398,diario,2025-01-31,Hoy en portada — el metro ligero,25259,7983,7202,1141,1042,32
+399,sobremesa,2025-02-01,Esta semana probamos: Gesha del Huila,17482,6962,6292,1049,963,18
+400,diario,2025-02-03,El resumen del día,25280,8757,8315,1259,1104,35
+401,diario,2025-02-04,Lo que debes leer hoy en Colombia,25286,7097,6623,1423,1230,25
+402,diario,2025-02-05,Tu resumen del miércoles,25289,7894,7559,1550,1423,45
+403,diario,2025-02-06,Cinco historias para hoy,25292,7181,6799,1635,1447,36
+404,verde,2025-02-06,Verde · proyecto Quebradona,9663,4320,4081,981,880,6
+405,diario,2025-02-07,Diario: la agenda del Congreso,25302,8266,7762,1300,1163,32
+406,sobremesa,2025-02-08,"Café, comida y cultura: los festivales de diciembre",17496,6893,6220,1221,1076,21
+407,diario,2025-02-10,Hoy en portada — reforma pensional,25316,8018,7364,1568,1435,33
+408,diario,2025-02-11,Hoy en portada — la agenda del Congreso,25324,7714,7243,1176,1035,33
+409,diario,2025-02-12,El resumen del día,25329,7296,6640,1289,1116,54
+410,diario,2025-02-13,El resumen del día,25337,8691,8194,1417,1286,58
+411,verde,2025-02-13,Verde: la crisis del agua en Bogotá,9678,4155,3876,945,851,10
+412,diario,2025-02-14,La mañana en Colombia: la agenda del Congreso,25340,7430,6908,1877,1679,61
+413,sobremesa,2025-02-15,Sobremesa · Gesha del Huila,17525,6029,5614,1289,1142,15
+414,diario,2025-02-17,Hoy en La Brújula: tarifas de EPM,25361,8562,8044,1599,1462,55
+415,diario,2025-02-18,Cinco historias para hoy,25366,7587,7250,1458,1294,42
+416,diario,2025-02-19,Lo que debes leer hoy en Colombia,25373,8234,7901,1248,1078,60
+417,diario,2025-02-20,Hoy en La Brújula: la agenda del Congreso,25377,8362,7646,1404,1227,49
+418,verde,2025-02-20,Lo urgente en clima: consulta previa,9696,4322,4077,1347,1168,4
+419,diario,2025-02-21,Un vistazo al país — Hidroituango,25387,8262,7835,1560,1389,35
+420,sobremesa,2025-02-22,Esta semana probamos: mercados campesinos,17563,6014,5644,1316,1180,16
+421,diario,2025-02-24,El resumen del día,25405,8858,8100,1815,1636,35
+422,diario,2025-02-25,La mañana en Colombia: paz total,25409,7776,7289,1491,1339,31
+423,diario,2025-02-26,El resumen del día,25418,7624,7317,1313,1190,57
+424,diario,2025-02-27,Un vistazo al país — reforma a la salud,25426,7208,6910,1633,1426,27
+425,verde,2025-02-27,Alerta verde — la crisis del agua en Bogotá,9717,4090,3856,1273,1122,9
+426,diario,2025-02-28,Lo que debes leer hoy en Colombia,25433,8412,7821,1805,1592,34
+427,sobremesa,2025-03-01,Lo que está pasando en la cocina colombiana,17592,6654,6315,1536,1367,21
+428,diario,2025-03-03,Hoy en La Brújula: tarifas de EPM,25454,8010,7321,1343,1235,33
+429,diario,2025-03-04,Hoy en La Brújula: el metro ligero,25463,8067,7522,1891,1717,27
+430,diario,2025-03-05,Diario: Corte Constitucional,25467,7402,7089,1884,1670,55
+431,diario,2025-03-06,Un vistazo al país — Corte Constitucional,25478,8889,8429,1804,1609,26
+432,verde,2025-03-06,Verde: transición energética,9736,4367,4179,1115,1022,8
+433,diario,2025-03-07,La mañana en Colombia: paro camionero,25486,8671,8116,1865,1682,28
+434,sobremesa,2025-03-08,Para el fin de semana: las arepas del Valle de Aburrá,17625,6066,5777,1187,1033,17
+435,diario,2025-03-10,La mañana en Colombia: reforma pensional,25516,7925,7218,1262,1123,55
+436,diario,2025-03-11,Cinco historias para hoy,25520,8821,8288,1383,1222,51
+437,diario,2025-03-12,Hoy en La Brújula: la consulta popular,25529,7602,7292,1701,1493,35
+438,diario,2025-03-13,Buenas tardes desde Medellín,25532,8555,7739,1460,1321,42
+439,verde,2025-03-13,Verde: contaminación del río Medellín,9756,4135,3942,1175,1037,9
+440,diario,2025-03-14,Buenas tardes desde Medellín,25535,8320,7586,1270,1167,60
+441,sobremesa,2025-03-15,Esta semana probamos: Tabi de Nariño,17659,6243,5888,1046,920,20
+442,diario,2025-03-17,Cinco historias para hoy,25554,7286,6582,1672,1521,32
+443,diario,2025-03-18,Cinco historias para hoy,25559,7322,6834,1316,1202,44
+444,diario,2025-03-19,El resumen del día,25567,8835,8293,1648,1444,55
+445,diario,2025-03-20,Buenas tardes desde Medellín,25577,8632,7890,1797,1588,25
+446,verde,2025-03-20,Verde: ríos contaminados de Antioquia,9767,4195,3970,1062,951,9
+447,diario,2025-03-21,Hoy en portada — migración venezolana,25585,8682,7962,1896,1684,45
+448,sobremesa,2025-03-22,Sobremesa: las arepas del Valle de Aburrá,17686,6070,5655,1097,981,15
+449,diario,2025-03-24,Cinco historias para hoy,25603,7913,7162,1560,1344,62
+450,diario,2025-03-25,Un vistazo al país — POT de Medellín,25610,7972,7551,1676,1513,57
+451,diario,2025-03-26,Hoy en portada — Hidroituango,25615,7473,7091,1692,1521,34
+452,diario,2025-03-27,Un vistazo al país — elecciones locales,25624,8261,7614,1436,1307,46
+453,verde,2025-03-27,La semana del clima: la crisis del agua en Bogotá,9779,4367,4118,1084,992,6
+454,diario,2025-03-28,Tu resumen del viernes,25630,8562,8051,1250,1081,42
+455,sobremesa,2025-03-29,Sobremesa: Gesha del Huila,17719,6100,5540,1294,1121,16
+456,diario,2025-03-31,Un vistazo al país — Hidroituango,25652,7625,7237,1818,1627,34
+457,diario,2025-04-01,Buenas tardes desde Medellín,25660,8414,7911,1843,1641,59
+458,diario,2025-04-02,El resumen del día,25666,8358,7806,1741,1513,56
+459,diario,2025-04-03,Cinco historias para hoy,25670,8749,7966,1832,1634,54
+460,verde,2025-04-03,Verde: la crisis del agua en Bogotá,9799,4350,4027,1036,917,11
+461,diario,2025-04-04,El resumen del día,25677,8518,7722,1347,1195,27
+462,sobremesa,2025-04-05,Sobremesa · el sancocho trifásico,17759,6272,6016,1475,1320,30
+463,diario,2025-04-07,Diario: reforma a la salud,25700,7398,6835,1619,1462,58
+464,diario,2025-04-08,Hoy en La Brújula: Corte Constitucional,25707,8773,8037,1208,1102,60
+465,diario,2025-04-09,Un vistazo al país — reforma pensional,25715,7271,6675,1901,1690,56
+466,diario,2025-04-10,Tu resumen del jueves,25718,8485,7952,1629,1403,45
+467,verde,2025-04-10,Alerta verde — biodiversidad en el Pacífico,9814,4346,4156,1089,995,11
+468,diario,2025-04-11,Lo que debes leer hoy en Colombia,25727,7514,7020,1326,1159,45
+469,sobremesa,2025-04-12,Entre tazas y fogones,17787,6805,6389,1285,1106,31
+470,diario,2025-04-14,Un vistazo al país — reforma pensional,25742,8302,7908,1652,1425,40
+471,diario,2025-04-15,Cinco historias para hoy,25749,7860,7334,1489,1352,56
+472,diario,2025-04-16,Hoy en portada — Hidroituango,25758,9007,8359,1566,1409,41
+473,diario,2025-04-17,La mañana en Colombia: POT de Medellín,25766,7766,7048,1344,1209,46
+474,verde,2025-04-17,Alerta verde — biodiversidad en el Pacífico,9834,4266,3863,1270,1134,9
+475,diario,2025-04-18,La mañana en Colombia: Corte Constitucional,25774,8499,8130,1601,1430,59
+476,sobremesa,2025-04-19,La mesa de Sobremesa,17813,7105,6397,1091,959,18
+477,diario,2025-04-21,El resumen del día,25795,8181,7646,1224,1073,32
+478,diario,2025-04-22,El resumen del día,25804,7581,6957,1321,1177,61
+479,diario,2025-04-23,El resumen del día,25813,7338,7006,1808,1606,48
+480,diario,2025-04-24,El resumen del día,25820,7858,7461,1691,1499,35
+481,verde,2025-04-24,El balance ambiental de la semana,9857,4434,4213,933,826,8
+482,diario,2025-04-25,Hoy en portada — POT de Medellín,25829,7603,7051,1537,1349,58
+483,sobremesa,2025-04-26,La mesa de Sobremesa,17847,6414,6131,1155,1023,23
+484,diario,2025-04-28,La mañana en Colombia: presupuesto nacional,25851,8540,7915,1176,1048,29
+485,diario,2025-04-29,La mañana en Colombia: presupuesto nacional,25856,8491,7845,1217,1064,34
+486,diario,2025-04-30,Lo que debes leer hoy en Colombia,25863,8067,7657,1692,1458,40
+487,diario,2025-05-01,Un vistazo al país — elecciones locales,25868,7988,7428,1314,1176,52
+488,verde,2025-05-01,Verde: los páramos de Santurbán,9873,4351,4159,898,816,9
+489,diario,2025-05-02,Diario: el metro ligero,25874,7254,6895,1795,1647,43
+490,sobremesa,2025-05-03,"Café, comida y cultura: el aguardiente antioqueño",17884,6350,5724,1121,1014,24
+491,diario,2025-05-05,Buenas tardes desde Medellín,25887,9038,8164,1657,1469,55
+492,diario,2025-05-06,Un vistazo al país — Corte Constitucional,25894,7721,7293,1171,1049,44
+493,diario,2025-05-07,Hoy en La Brújula: reforma a la salud,25902,7520,7068,1794,1649,42
+494,diario,2025-05-08,Tu resumen del jueves,25907,8776,7996,1880,1624,57
+495,verde,2025-05-08,Una semana en la crisis climática,9891,4314,3994,1354,1245,7
+496,diario,2025-05-09,Lo que debes leer hoy en Colombia,25920,7334,6903,1394,1274,49
+497,sobremesa,2025-05-10,Para el fin de semana: Caturra del Tolima,17920,6137,5761,1011,902,35
+498,diario,2025-05-12,Tu resumen del lunes,25936,7693,7017,1493,1371,43
+499,diario,2025-05-13,Hoy en La Brújula: la consulta popular,25939,9036,8530,1511,1374,29
+500,diario,2025-05-14,Hoy en La Brújula: Corte Constitucional,25945,8065,7322,1801,1579,63
+501,diario,2025-05-15,El resumen del día,25952,8395,7685,1827,1642,34
+502,verde,2025-05-15,La semana del clima: deforestación en la Amazonía,9909,4351,4078,1256,1103,5
+503,diario,2025-05-16,El resumen del día,25957,7600,7156,1632,1418,51
+504,sobremesa,2025-05-17,"Café, comida y cultura: el sancocho trifásico",17959,6729,6276,1580,1431,24
+505,diario,2025-05-19,Cinco historias para hoy,25974,7439,7046,1364,1241,43
+506,diario,2025-05-20,Diario: reforma a la salud,25983,8745,8311,1529,1356,36
+507,diario,2025-05-21,Hoy en La Brújula: POT de Medellín,25986,7454,6815,1666,1490,50
+508,diario,2025-05-22,Tu resumen del jueves,25993,7367,6702,1227,1124,56
+509,verde,2025-05-22,Alerta verde — biodiversidad en el Pacífico,9932,4433,4021,979,889,7
+510,diario,2025-05-23,Hoy en La Brújula: reforma pensional,25997,8420,7863,1717,1536,63
+511,sobremesa,2025-05-24,Sobremesa · el sancocho trifásico,17989,6797,6415,1408,1226,22
+512,diario,2025-05-26,Tu resumen del lunes,26020,7735,6962,1413,1284,44
+513,diario,2025-05-27,Un vistazo al país — Hidroituango,26028,8491,8014,1358,1235,30
+514,diario,2025-05-28,Hoy en La Brújula: paz total,26037,8095,7611,1643,1444,35
+515,diario,2025-05-29,Cinco historias para hoy,26046,7356,6888,1806,1629,52
+516,verde,2025-05-29,Verde: transición energética,9949,4743,4423,1121,989,4
+517,diario,2025-05-30,Tu resumen del viernes,26056,9111,8269,1878,1707,46
+518,sobremesa,2025-05-31,Para el fin de semana: nuevos baristas de Medellín,18023,6820,6449,1532,1391,31
+519,diario,2025-06-02,Diario: Corte Constitucional,26077,8414,7732,1879,1701,37
+520,diario,2025-06-03,Tu resumen del martes,26081,7704,7194,1614,1402,30
+521,diario,2025-06-04,Buenas tardes desde Medellín,26084,7778,7245,1635,1471,61
+522,diario,2025-06-05,Lo que debes leer hoy en Colombia,26092,8032,7306,1552,1371,59
+523,verde,2025-06-05,Verde · biodiversidad en el Pacífico,9969,4326,4033,1147,1046,5
+524,diario,2025-06-06,Hoy en portada — paz total,26103,8140,7736,1868,1614,42
+525,sobremesa,2025-06-07,"Café, comida y cultura: el aguardiente antioqueño",18054,6919,6533,1041,930,20
+526,diario,2025-06-09,El resumen del día,26125,7987,7274,1619,1420,48
+527,diario,2025-06-10,Hoy en La Brújula: paro camionero,26129,8372,7893,1326,1204,32
+528,diario,2025-06-11,Diario: el metro ligero,26137,8182,7736,1782,1552,30
+529,diario,2025-06-12,Hoy en portada — reforma pensional,26141,8714,7864,1784,1585,38
+530,verde,2025-06-12,Esta semana en biodiversidad,9981,4303,4099,1347,1192,6
+531,diario,2025-06-13,Hoy en portada — Hidroituango,26150,8691,7884,1263,1159,42
+532,sobremesa,2025-06-14,Esta semana probamos: Gesha del Huila,18078,6985,6490,1351,1226,28
+533,diario,2025-06-16,Hoy en portada — elecciones locales,26164,7496,7096,1336,1195,59
+534,diario,2025-06-17,Un vistazo al país — paz total,26171,8394,7629,1439,1237,62
+535,diario,2025-06-18,Diario: presupuesto nacional,26180,7631,7266,1558,1406,36
+536,diario,2025-06-19,Cinco historias para hoy,26185,7694,7254,1311,1147,46
+537,verde,2025-06-19,El balance ambiental de la semana,9993,4653,4401,1199,1098,6
+538,diario,2025-06-20,Diario: migración venezolana,26188,8789,8410,1526,1368,50
+539,sobremesa,2025-06-21,"Café, comida y cultura: nuevos baristas de Medellín",18102,6248,5717,1340,1164,30
+540,diario,2025-06-23,Un vistazo al país — paz total,26218,7798,7463,1929,1733,26
+541,diario,2025-06-24,Tu resumen del martes,26224,8993,8341,1591,1414,60
+542,diario,2025-06-25,Cinco historias para hoy,26230,7571,7062,1363,1209,64
+543,diario,2025-06-26,Hoy en La Brújula: tarifas de EPM,26238,8633,8162,1189,1046,62
+544,verde,2025-06-26,Verde: consulta previa,10003,4702,4443,1328,1207,8
+545,diario,2025-06-27,El resumen del día,26244,7778,7243,1432,1235,36
+546,sobremesa,2025-06-28,"Café, comida y cultura: nuevos baristas de Medellín",18137,6453,5961,1320,1150,18
+547,diario,2025-06-30,Lo que debes leer hoy en Colombia,26263,8673,8012,1484,1279,57
+548,diario,2025-07-01,Cinco historias para hoy,26271,8614,8237,1946,1742,33
+549,diario,2025-07-02,Un vistazo al país — el metro ligero,26275,8436,7952,1725,1508,35
+550,diario,2025-07-03,Diario: la consulta popular,26279,7970,7373,1425,1270,43
+551,verde,2025-07-03,Lo urgente en clima: minería ilegal en el Chocó,10019,4399,4204,1303,1156,9
+552,diario,2025-07-04,Lo que debes leer hoy en Colombia,26283,7653,6971,1325,1189,56
+553,sobremesa,2025-07-05,Esta semana probamos: las arepas del Valle de Aburrá,18164,7059,6621,1048,925,26
+554,diario,2025-07-07,La mañana en Colombia: POT de Medellín,26303,8543,8013,1337,1168,35
+555,diario,2025-07-08,El resumen del día,26312,7412,7036,1304,1147,29
+556,diario,2025-07-09,Hoy en La Brújula: migración venezolana,26315,8120,7644,1743,1518,35
+557,diario,2025-07-10,Diario: Corte Constitucional,26321,7954,7623,1376,1234,44
+558,verde,2025-07-10,Una semana en la crisis climática,10037,4598,4194,1291,1151,6
+559,diario,2025-07-11,Diario: presupuesto nacional,26325,7760,7244,1284,1115,27
+560,sobremesa,2025-07-12,Sobremesa: cocina indígena del Cauca,18193,6585,6258,1114,1024,25
+561,diario,2025-07-14,La mañana en Colombia: paro camionero,26355,8437,7770,1471,1310,32
+562,diario,2025-07-15,Tu resumen del martes,26359,8637,8024,1755,1569,48
+563,diario,2025-07-16,Lo que debes leer hoy en Colombia,26364,7675,6972,1373,1246,53
+564,diario,2025-07-17,Hoy en La Brújula: reforma a la salud,26369,8344,7675,1694,1546,29
+565,verde,2025-07-17,La semana del clima: sequía en La Guajira,10047,4616,4311,925,848,10
+566,diario,2025-07-18,Buenas tardes desde Medellín,26374,7681,6941,1486,1331,30
+567,sobremesa,2025-07-19,Sobremesa: mercados campesinos,18219,6673,6169,1543,1347,31
+568,diario,2025-07-21,Hoy en La Brújula: el metro ligero,26397,8710,8268,1672,1485,34
+569,diario,2025-07-22,Tu resumen del martes,26403,9039,8303,1825,1586,44
+570,diario,2025-07-23,Diario: paro camionero,26411,9132,8570,1612,1436,36
+571,diario,2025-07-24,La mañana en Colombia: paz total,26413,7665,7343,1669,1483,26
+572,verde,2025-07-24,Lo urgente en clima: los páramos de Santurbán,10057,4801,4560,1356,1231,4
+573,diario,2025-07-25,Diario: presupuesto nacional,26422,8281,7770,1343,1204,34
+574,sobremesa,2025-07-26,Sobremesa · cocina indígena del Cauca,18247,6315,5700,1375,1238,36
+575,diario,2025-07-28,Tu resumen del lunes,26443,8289,7711,1234,1124,59
+576,diario,2025-07-29,La mañana en Colombia: el metro ligero,26450,8643,8277,1622,1416,57
+577,diario,2025-07-30,Buenas tardes desde Medellín,26455,8597,7942,1850,1594,52
+578,diario,2025-07-31,Hoy en La Brújula: el metro ligero,26459,7985,7340,1598,1410,60
+579,verde,2025-07-31,Verde: sequía en La Guajira,10070,4638,4200,1075,969,6
+580,diario,2025-08-01,Cinco historias para hoy,26465,7467,6847,1429,1231,63
+581,sobremesa,2025-08-02,Sobremesa: la lechona tolimense,18286,7289,6919,1213,1055,20
+582,diario,2025-08-04,Hoy en La Brújula: tarifas de EPM,26481,7819,7149,1550,1353,34
+583,diario,2025-08-05,La mañana en Colombia: POT de Medellín,26486,7564,6846,1767,1571,34
+584,diario,2025-08-06,Un vistazo al país — reforma pensional,26491,8201,7583,1610,1460,41
+585,diario,2025-08-07,Un vistazo al país — presupuesto nacional,26496,9147,8283,1524,1395,39
+586,verde,2025-08-07,Alerta verde — transición energética,10089,4761,4471,1241,1073,6
+587,diario,2025-08-08,Tu resumen del viernes,26502,8739,8114,1528,1324,54
+588,sobremesa,2025-08-09,Lo que está pasando en la cocina colombiana,18323,6464,6183,1273,1159,20
+589,diario,2025-08-11,Hoy en portada — tarifas de EPM,26528,8765,8063,1546,1361,62
+590,diario,2025-08-12,Buenas tardes desde Medellín,26533,8036,7567,1588,1447,26
+591,diario,2025-08-13,Hoy en La Brújula: la consulta popular,26544,8366,7643,1484,1313,37
+592,diario,2025-08-14,Tu resumen del jueves,26548,8671,8106,1234,1120,65
+593,verde,2025-08-14,Una semana en la crisis climática,10104,4771,4382,1081,963,4
+594,diario,2025-08-15,Lo que debes leer hoy en Colombia,26554,9047,8368,1766,1619,35
+595,sobremesa,2025-08-16,Sobremesa · los festivales de diciembre,18354,7134,6509,1079,975,27
+596,diario,2025-08-18,Lo que debes leer hoy en Colombia,26572,7897,7558,1666,1491,42
+597,diario,2025-08-19,Hoy en portada — la agenda del Congreso,26582,7560,6848,1639,1458,53
+598,diario,2025-08-20,Diario: elecciones locales,26587,8883,8001,1700,1534,46
+599,diario,2025-08-21,Un vistazo al país — paz total,26592,8903,8048,1916,1760,40
+600,verde,2025-08-21,Una semana en la crisis climática,10125,4453,4031,1253,1109,10
+601,diario,2025-08-22,La mañana en Colombia: reforma pensional,26599,8346,7533,1572,1434,49
+602,sobremesa,2025-08-23,Para el fin de semana: Bourbon Rosado,18379,7330,6681,1566,1382,27
+603,diario,2025-08-25,Hoy en La Brújula: Corte Constitucional,26626,9124,8698,1257,1140,60
+604,diario,2025-08-26,Diario: reforma a la salud,26633,8990,8236,1468,1331,59
+605,diario,2025-08-27,Un vistazo al país — migración venezolana,26638,7676,7311,1292,1114,42
+606,diario,2025-08-28,Tu resumen del jueves,26649,9096,8217,1698,1517,52
+607,verde,2025-08-28,Esta semana en biodiversidad,10146,4385,3957,1262,1141,4
+608,diario,2025-08-29,Hoy en La Brújula: la consulta popular,26654,7477,7129,1767,1604,63
+609,sobremesa,2025-08-30,Esta semana probamos: Tabi de Nariño,18420,6837,6442,1404,1291,15
+610,diario,2025-09-01,Cinco historias para hoy,26670,8269,7671,1317,1191,28
+611,diario,2025-09-02,Hoy en portada — la agenda del Congreso,26673,8642,8143,1310,1158,36
+612,diario,2025-09-03,La mañana en Colombia: paro camionero,26680,7654,6899,1676,1446,39
+613,diario,2025-09-04,Hoy en portada — Corte Constitucional,26693,8859,8437,1323,1183,65
+614,verde,2025-09-04,La semana del clima: la crisis del agua en Bogotá,10167,4584,4314,1147,1027,7
+615,diario,2025-09-05,Un vistazo al país — reforma a la salud,26699,9036,8234,1217,1087,54
+616,sobremesa,2025-09-06,Sobremesa: Caturra del Tolima,18453,6756,6389,1411,1257,30
+617,diario,2025-09-08,Hoy en portada — Corte Constitucional,26725,8850,8322,1536,1409,48
+618,diario,2025-09-09,Hoy en La Brújula: la consulta popular,26728,7925,7245,1429,1246,55
+619,diario,2025-09-10,Hoy en La Brújula: Corte Constitucional,26732,8461,8065,1563,1394,61
+620,diario,2025-09-11,El resumen del día,26735,8048,7437,1238,1067,48
+621,verde,2025-09-11,Alerta verde — deforestación en la Amazonía,10187,4703,4288,1396,1254,9
+622,diario,2025-09-12,Tu resumen del viernes,26741,9272,8417,1541,1363,29
+623,sobremesa,2025-09-13,Esta semana probamos: mercados campesinos,18485,6715,6279,1253,1123,26
+624,diario,2025-09-15,Lo que debes leer hoy en Colombia,26773,8881,8465,1463,1259,44
+625,diario,2025-09-16,El resumen del día,26781,7687,7249,1747,1604,47
+626,diario,2025-09-17,El resumen del día,26788,8274,7814,1400,1255,51
+627,diario,2025-09-18,El resumen del día,26795,7520,7195,1917,1689,66
+628,verde,2025-09-18,El balance ambiental de la semana,10207,4468,4089,1369,1229,12
+629,diario,2025-09-19,Un vistazo al país — el metro ligero,26805,8130,7356,1615,1422,58
+630,sobremesa,2025-09-20,La mesa de Sobremesa,18518,6464,5833,1266,1109,17
+631,diario,2025-09-22,El resumen del día,26824,8352,7813,1372,1208,35
+632,diario,2025-09-23,Diario: reforma pensional,26828,9322,8662,1642,1499,35
+633,diario,2025-09-24,La mañana en Colombia: migración venezolana,26836,8289,7720,1744,1510,40
+634,diario,2025-09-25,Diario: paz total,26842,9063,8517,1735,1525,62
+635,verde,2025-09-25,Una semana en la crisis climática,10222,4784,4548,1376,1195,5
+636,diario,2025-09-26,Un vistazo al país — tarifas de EPM,26848,8586,8194,1344,1159,45
+637,sobremesa,2025-09-27,Para el fin de semana: cocina indígena del Cauca,18546,6665,6054,1278,1114,36
+638,diario,2025-09-29,Hoy en La Brújula: tarifas de EPM,26867,8812,8365,1472,1332,52
+639,diario,2025-09-30,Lo que debes leer hoy en Colombia,26870,8882,8352,1359,1206,63
+640,diario,2025-10-01,Hoy en La Brújula: paz total,26878,8025,7677,1232,1097,38
+641,diario,2025-10-02,Lo que debes leer hoy en Colombia,26885,8182,7551,1959,1801,66
+642,verde,2025-10-02,Una semana en la crisis climática,10239,4703,4448,1402,1237,8
+643,diario,2025-10-03,Hoy en La Brújula: POT de Medellín,26890,8967,8391,1817,1670,39
+644,sobremesa,2025-10-04,Sobremesa · nuevos baristas de Medellín,18572,6347,6011,1609,1388,19
+645,diario,2025-10-06,Cinco historias para hoy,26903,8393,7991,1672,1457,43
+646,diario,2025-10-07,Hoy en portada — el metro ligero,26906,8758,8353,1473,1272,49
+647,diario,2025-10-08,Hoy en La Brújula: elecciones locales,26917,8801,8405,1218,1086,39
+648,diario,2025-10-09,Buenas tardes desde Medellín,26924,7832,7333,1551,1337,61
+649,verde,2025-10-09,Lo urgente en clima: contaminación del río Medellín,10254,4309,3997,1320,1163,4
+650,diario,2025-10-10,Hoy en La Brújula: Hidroituango,26935,8012,7334,1552,1405,50
+651,sobremesa,2025-10-11,La mesa de Sobremesa,18601,6492,6165,1221,1093,25
+652,diario,2025-10-13,Buenas tardes desde Medellín,26958,7645,7339,1811,1602,54
+653,diario,2025-10-14,Buenas tardes desde Medellín,26963,7743,7136,1867,1632,42
+654,diario,2025-10-15,Un vistazo al país — Hidroituango,26971,9140,8719,1787,1622,33
+655,diario,2025-10-16,La mañana en Colombia: Corte Constitucional,26977,8636,7869,1364,1177,64
+656,verde,2025-10-16,Verde: consulta previa,10274,4366,3936,1102,948,8
+657,diario,2025-10-17,Diario: paro camionero,26988,9239,8387,1288,1154,43
+658,sobremesa,2025-10-18,Entre tazas y fogones,18637,6510,6216,1635,1438,17
+659,diario,2025-10-20,Cinco historias para hoy,27010,7751,6986,1965,1744,67
+660,diario,2025-10-21,El resumen del día,27016,8159,7479,1382,1229,34
+661,diario,2025-10-22,Cinco historias para hoy,27020,7663,7332,1264,1162,47
+662,diario,2025-10-23,Un vistazo al país — POT de Medellín,27028,9013,8416,1467,1285,41
+663,verde,2025-10-23,Alerta verde — la crisis del agua en Bogotá,10303,4555,4266,1184,1052,6
+664,diario,2025-10-24,La mañana en Colombia: paro camionero,27034,8557,8032,1418,1252,29
+665,sobremesa,2025-10-25,Sobremesa: el sancocho trifásico,18666,7042,6418,1257,1108,31
+666,diario,2025-10-27,Tu resumen del lunes,27052,8361,7885,1972,1761,61
+667,diario,2025-10-28,Cinco historias para hoy,27057,9010,8179,1712,1569,66
+668,diario,2025-10-29,El resumen del día,27062,8339,7527,1578,1377,28
+669,diario,2025-10-30,Hoy en portada — reforma a la salud,27068,7831,7210,1689,1495,50
+670,verde,2025-10-30,La semana del clima: sequía en La Guajira,10321,4593,4246,1081,984,7
+671,diario,2025-10-31,Hoy en La Brújula: reforma a la salud,27076,8219,7733,1627,1417,58
+672,sobremesa,2025-11-01,"Café, comida y cultura: el aguardiente antioqueño",18705,7089,6671,1165,1046,37
+673,diario,2025-11-03,El resumen del día,27099,9455,9067,1423,1293,38
+674,diario,2025-11-04,La mañana en Colombia: reforma pensional,27108,8442,7808,1444,1272,67
+675,diario,2025-11-05,Buenas tardes desde Medellín,27113,8439,7780,1467,1346,56
+676,diario,2025-11-06,Diario: la agenda del Congreso,27118,7659,7128,1988,1736,64
+677,verde,2025-11-06,Verde · contaminación del río Medellín,10346,4484,4243,1001,884,7
+678,diario,2025-11-07,Tu resumen del viernes,27126,9343,8445,1669,1494,28
+679,sobremesa,2025-11-08,Para el fin de semana: el sancocho trifásico,18741,7404,7033,1090,941,36
+680,diario,2025-11-10,Lo que debes leer hoy en Colombia,27153,9353,8746,1518,1306,29
+681,diario,2025-11-11,Buenas tardes desde Medellín,27162,7802,7279,1331,1170,46
+682,diario,2025-11-12,El resumen del día,27168,8656,7791,1789,1570,33
+683,diario,2025-11-13,El resumen del día,27175,7759,7089,1453,1291,47
+684,verde,2025-11-13,Lo urgente en clima: la COP de Medellín,10371,4960,4555,1268,1119,11
+685,diario,2025-11-14,Hoy en portada — POT de Medellín,27183,8497,7848,1572,1421,59
+686,sobremesa,2025-11-15,Sobremesa: mercados campesinos,18777,7345,6742,1335,1206,29
+687,diario,2025-11-17,Hoy en La Brújula: reforma pensional,27200,8229,7813,1997,1719,67
+688,diario,2025-11-18,La mañana en Colombia: presupuesto nacional,27210,8193,7820,1691,1511,53
+689,diario,2025-11-19,Buenas tardes desde Medellín,27218,8018,7289,1625,1423,39
+690,diario,2025-11-20,Hoy en La Brújula: el metro ligero,27222,7677,7158,1970,1777,45
+691,verde,2025-11-20,Verde · consulta previa,10394,4978,4499,1057,918,9
+692,diario,2025-11-21,El resumen del día,27228,7681,7225,1373,1183,29
+693,sobremesa,2025-11-22,Para el fin de semana: el sancocho trifásico,18817,6766,6267,1244,1105,17
+694,diario,2025-11-24,El resumen del día,27252,9430,8784,2008,1742,65
+695,diario,2025-11-25,El resumen del día,27262,9039,8329,1388,1206,53
+696,diario,2025-11-26,Tu resumen del miércoles,27266,9522,8631,1858,1684,59
+697,diario,2025-11-27,La mañana en Colombia: paro camionero,27275,9044,8482,1455,1293,64
+698,verde,2025-11-27,Verde · consulta previa,10415,4456,4135,990,867,5
+699,diario,2025-11-28,Lo que debes leer hoy en Colombia,27280,9222,8629,1518,1337,53
+700,sobremesa,2025-11-29,Sobremesa: Bourbon Rosado,18851,7520,7008,1282,1103,15
+701,diario,2025-12-01,Un vistazo al país — paro camionero,27295,9353,8908,1404,1212,29
+702,diario,2025-12-02,Hoy en La Brújula: reforma pensional,27303,8385,7895,1667,1434,48
+703,diario,2025-12-03,La mañana en Colombia: paro camionero,27311,9130,8464,1684,1538,55
+704,diario,2025-12-04,Cinco historias para hoy,27320,8509,7739,1323,1201,36
+705,verde,2025-12-04,Esta semana en biodiversidad,10429,4854,4388,941,840,10
+706,diario,2025-12-05,Un vistazo al país — Hidroituango,27330,8632,8157,1520,1375,45
+707,sobremesa,2025-12-06,Entre tazas y fogones,18879,6650,6025,1106,955,35
+708,diario,2025-12-08,Lo que debes leer hoy en Colombia,27347,7895,7293,1361,1182,39
+709,diario,2025-12-09,El resumen del día,27351,8619,8151,1673,1513,30
+710,diario,2025-12-10,Diario: reforma pensional,27359,7849,7519,1908,1676,33
+711,diario,2025-12-11,Buenas tardes desde Medellín,27365,8188,7591,1937,1777,43
+712,verde,2025-12-11,Una semana en la crisis climática,10446,4477,4067,1115,989,5
+713,diario,2025-12-12,Lo que debes leer hoy en Colombia,27374,8325,7744,1916,1728,55
+714,sobremesa,2025-12-13,Para el fin de semana: el aguardiente antioqueño,18914,7022,6684,1344,1156,37
+715,diario,2025-12-15,Diario: reforma a la salud,27397,9405,8853,1466,1302,42
+716,diario,2025-12-16,Tu resumen del martes,27403,8081,7534,1571,1437,47
+717,diario,2025-12-17,Cinco historias para hoy,27412,8450,7828,1237,1125,60
+718,diario,2025-12-18,Diario: paz total,27419,7906,7473,1241,1127,56
+719,verde,2025-12-18,La semana del clima: minería ilegal en el Chocó,10461,4396,3987,1290,1138,11
+720,diario,2025-12-19,El resumen del día,27424,8494,7723,1904,1701,55
+721,sobremesa,2025-12-20,Sobremesa: Caturra del Tolima,18950,6599,6233,1218,1113,35
+722,diario,2025-12-22,La mañana en Colombia: paz total,27449,8401,7942,1553,1360,32
+723,diario,2025-12-23,El resumen del día,27455,8333,7804,1542,1362,56
+724,diario,2025-12-24,Hoy en portada — paro camionero,27466,9110,8611,1935,1757,30
+725,diario,2025-12-25,Hoy en La Brújula: la agenda del Congreso,27473,9244,8486,1809,1630,60
+726,verde,2025-12-25,Verde · contaminación del río Medellín,10487,5020,4573,1113,982,10
+727,diario,2025-12-26,Hoy en portada — el metro ligero,27477,9417,8630,1768,1548,58
+728,sobremesa,2025-12-27,Para el fin de semana: nuevos baristas de Medellín,18974,7201,6858,1639,1430,34
+729,diario,2025-12-29,Diario: POT de Medellín,27501,8124,7582,1684,1462,50
+730,diario,2025-12-30,Hoy en La Brújula: Hidroituango,27507,9045,8329,1395,1204,61
+731,diario,2025-12-31,El resumen del día,27515,9223,8564,1448,1256,27

@@ -1,0 +1,23 @@
+author_id,name,role,primary_beat,joined_at,is_active
+1,Carolina Restrepo Arango,editora_jefe,editorial,2018-01-15,1
+2,Mateo Ochoa Vélez,editor_clima,climate,2018-03-05,1
+3,Valentina Pérez Mendoza,reportera_clima,climate,2019-07-22,1
+4,Santiago Gómez Jaramillo,reportero_clima,climate,2021-02-10,1
+5,Laura Quintero Ríos,reportera_clima,climate,2022-09-01,1
+6,Andrés Cárdenas Torres,editor_ciudades,urban,2018-06-18,1
+7,Daniela Hoyos Vargas,reportera_ciudades,urban,2020-01-07,1
+8,Felipe Correa Salazar,reportero_ciudades,urban,2023-04-03,1
+9,Juliana Mejía Castaño,editora_investigaciones,investigations,2018-09-10,1
+10,Sebastián Urrego Morales,reportero_investigaciones,investigations,2020-11-16,1
+11,Camila Parra Gutiérrez,reportera_investigaciones,investigations,2022-05-30,1
+12,Natalia Zapata Osorio,editora_cultura,culture,2019-02-01,1
+13,Tomás Herrera Londoño,reportero_cultura,culture,2021-08-23,1
+14,Isabella Acevedo Posada,reportera_cultura,culture,2023-10-12,1
+15,Diego Montoya Rendón,editor_politica,politics,2019-05-14,1
+16,Manuela Ramírez Cano,reportera_politica,politics,2021-06-07,1
+17,Esteban Duque Tobón,reportero_politica,politics,2024-01-22,1
+18,Alejandra Bedoya Franco,reportera_actualidad,news,2018-11-05,1
+19,Juan David Gallego Rivas,reportero_actualidad,news,2022-03-14,1
+20,Paulina Arboleda Giraldo,reportera_actualidad,news,2024-07-01,1
+21,Ricardo Cuervo Henao,columnista,opinion,2018-01-20,1
+22,Ana María Vélez Escobar,columnista,opinion,2020-04-18,1
