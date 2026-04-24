@@ -18,7 +18,7 @@ from pathlib import Path
 
 from faker import Faker
 
-from lib import audience, campaigns, newsletter, outlet
+from lib import audience, campaigns, newsletter, outlet, sponsors
 from lib.config import SEED
 
 ROOT: Path = Path(__file__).parent
@@ -83,7 +83,10 @@ def main() -> None:
             rng, campaign_rows, articles
         )
         campaigns.write_campaigns(conn, campaign_rows, bridge_rows)
-        print(f"[campaigns] campaigns: {len(campaign_rows)}  bridge rows: {len(bridge_rows)}")
+        print(
+            f"[campaigns] campaigns: {len(campaign_rows)}  "
+            f"bridge rows: {len(bridge_rows)}"
+        )
 
         campaigns.write_pricing_reference(DATA_DIR / "pricing_reference.md")
         print(f"[campaigns] pricing_reference.md written")
@@ -91,6 +94,9 @@ def main() -> None:
         conn.commit()
     finally:
         conn.close()
+
+    n_sponsor_files = sponsors.write_all_sponsors(rng, SPONSORS_DIR)
+    print(f"[sponsors] files written: {n_sponsor_files}")
 
 
 if __name__ == "__main__":
