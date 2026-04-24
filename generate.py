@@ -18,7 +18,7 @@ from pathlib import Path
 
 from faker import Faker
 
-from lib import audience, newsletter, outlet
+from lib import audience, campaigns, newsletter, outlet
 from lib.config import SEED
 
 ROOT: Path = Path(__file__).parent
@@ -77,6 +77,16 @@ def main() -> None:
         sends = newsletter.build_sends(rng, subscribers)
         newsletter.write_sends(conn, sends)
         print(f"[newsletter] sends: {len(sends)}")
+
+        campaign_rows = campaigns.build_campaigns(rng)
+        bridge_rows, campaign_rows = campaigns.build_campaign_articles_and_summaries(
+            rng, campaign_rows, articles
+        )
+        campaigns.write_campaigns(conn, campaign_rows, bridge_rows)
+        print(f"[campaigns] campaigns: {len(campaign_rows)}  bridge rows: {len(bridge_rows)}")
+
+        campaigns.write_pricing_reference(DATA_DIR / "pricing_reference.md")
+        print(f"[campaigns] pricing_reference.md written")
 
         conn.commit()
     finally:
