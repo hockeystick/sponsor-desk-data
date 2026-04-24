@@ -24,7 +24,11 @@ SUBSCRIBER_COUNT: int = 45_000
 CAMPAIGN_COUNT: int = 72
 VIRAL_OUTLIER_COUNT: int = 8
 
-WEEKDAY_ARTICLES_RANGE: tuple[int, int] = (6, 12)
+# News cadence isn't uniform. Most weekdays sit in a normal band; a minority
+# of weekdays are news-heavy and reach the upper end of the spec's 6-12 range.
+WEEKDAY_NORMAL_RANGE: tuple[int, int] = (6, 9)
+WEEKDAY_BUSY_RANGE: tuple[int, int] = (10, 12)
+WEEKDAY_BUSY_SHARE: float = 0.15
 WEEKEND_ARTICLES_RANGE: tuple[int, int] = (2, 4)
 
 SECTION_WEIGHTS: dict[str, float] = {

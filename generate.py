@@ -13,10 +13,12 @@ No datetime.now() in data paths. No network calls. Single seed per run.
 from __future__ import annotations
 
 import random
+import sqlite3
 from pathlib import Path
 
 from faker import Faker
 
+from lib import outlet
 from lib.config import SEED
 
 ROOT: Path = Path(__file__).parent
@@ -32,6 +34,14 @@ def _ensure_dirs() -> None:
     SPONSORS_DIR.mkdir(exist_ok=True)
 
 
+def _fresh_sqlite() -> sqlite3.Connection:
+    if SQLITE_PATH.exists():
+        SQLITE_PATH.unlink()
+    conn = sqlite3.connect(SQLITE_PATH)
+    conn.execute("PRAGMA foreign_keys = ON;")
+    return conn
+
+
 def main() -> None:
     _ensure_dirs()
 
@@ -39,13 +49,19 @@ def main() -> None:
     fake = Faker("es_CO")
     fake.seed_instance(SEED)
 
-    # Phase 2+ generators will plug in here, each taking `rng` and `fake`
-    # and writing into SQLITE_PATH and SPONSORS_DIR respectively.
-    print(f"[scaffold] seed={SEED}")
-    print(f"[scaffold] data dir  : {DATA_DIR}")
-    print(f"[scaffold] sponsors  : {SPONSORS_DIR}")
-    print("[scaffold] Phase 1 complete — vocabularies and config loaded, "
-          "no data written yet.")
+    conn = _fresh_sqlite()
+    try:
+        authors = outlet.build_authors(rng)
+        outlet.write_authors(conn, authors)
+        print(f"[outlet] authors written: {len(authors)}")
+
+        articles = outlet.build_articles(rng, authors)
+        outlet.write_articles(conn, articles)
+        print(f"[outlet] articles written: {len(articles)}")
+
+        conn.commit()
+    finally:
+        conn.close()
 
 
 if __name__ == "__main__":
