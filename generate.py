@@ -59,6 +59,11 @@ def main() -> None:
         outlet.write_articles(conn, articles)
         print(f"[outlet] articles written: {len(articles)}")
 
+        pageview_rows, viral_ids = outlet.build_pageviews(rng, articles)
+        outlet.write_pageviews(conn, pageview_rows)
+        print(f"[outlet] pageview rows: {len(pageview_rows)}")
+        print(f"[outlet] viral articles: {sorted(viral_ids)}")
+
         conn.commit()
     finally:
         conn.close()

@@ -8,6 +8,7 @@ consistency checks.
 from __future__ import annotations
 
 import json
+import math
 import random
 import re
 import sqlite3
@@ -283,4 +284,136 @@ def write_articles(conn: sqlite3.Connection, articles: list[dict]) -> None:
         "VALUES (:article_id, :url, :headline_es, :headline_en, :section, "
         ":topic_tags, :published_at, :author_id, :word_count, :language, :sponsor_tag)",
         articles,
+    )
+
+
+# ---- pageviews_daily --------------------------------------------------------
+
+_VIRAL_PREFERRED_SECTIONS: set[str] = {"investigacion", "clima", "opinion", "politica"}
+
+
+def _pick_viral_article_ids(
+    rng: random.Random, articles: list[dict]
+) -> set[int]:
+    """One viral per calendar quarter; prefer long-form / politically heavy
+    sections so the variance lands where it's plausible."""
+    by_quarter: dict[tuple[int, int], list[dict]] = {}
+    for a in articles:
+        d = date.fromisoformat(a["published_at"][:10])
+        q = (d.year, (d.month - 1) // 3 + 1)
+        by_quarter.setdefault(q, []).append(a)
+    chosen: set[int] = set()
+    for q in sorted(by_quarter):
+        bucket = by_quarter[q]
+        preferred = [a for a in bucket if a["section"] in _VIRAL_PREFERRED_SECTIONS]
+        pool = preferred if preferred else bucket
+        chosen.add(rng.choice(pool)["article_id"])
+    return chosen
+
+
+def _expected_day_views(peak: int, day: int, half_life: float, publish_hour: int) -> float:
+    """peak is the day-1 value. Day 0 is a partial day scaled by remaining
+    hours; days >=2 decay exponentially with section half-life."""
+    if day == 0:
+        hours_remaining = max(1, 24 - publish_hour)
+        return peak * 0.55 * (hours_remaining / 24)
+    if day == 1:
+        return float(peak)
+    return peak * math.pow(0.5, (day - 1) / half_life)
+
+
+def build_pageviews(
+    rng: random.Random, articles: list[dict]
+) -> tuple[list[dict], set[int]]:
+    """Return (rows, viral_ids). viral_ids is surfaced so the CLI can log it."""
+    viral_ids = _pick_viral_article_ids(rng, articles)
+    rows: list[dict] = []
+
+    for article in articles:
+        section = article["section"]
+        published_dt = datetime.fromisoformat(article["published_at"])
+        publish_date = published_dt.date()
+        publish_hour = published_dt.hour
+        word_count = article["word_count"]
+        aid = article["article_id"]
+
+        is_viral = aid in viral_ids
+        viral_mult = (
+            rng.uniform(*config.VIRAL_MULTIPLIER_RANGE) if is_viral else 1.0
+        )
+
+        base = config.PEAK_PAGEVIEWS_BY_SECTION[section]
+        variance = math.exp(rng.gauss(0.0, config.PEAK_LOGNORMAL_SIGMA))
+        peak = max(120, int(base * variance * viral_mult))
+
+        half_life = config.HALF_LIFE_BY_SECTION[section]
+        tail_lo, tail_hi = config.TAIL_DAYS_BY_SECTION[section]
+        tail_days = rng.randint(tail_lo, tail_hi)
+        if is_viral:
+            tail_days = int(tail_days * rng.uniform(*config.VIRAL_TAIL_EXTENSION))
+
+        climate_bump_day = -1
+        climate_bump_mag = 0.0
+        if section == "clima" and rng.random() < config.CLIMATE_BUMP_PROB:
+            lo, hi = config.CLIMATE_BUMP_DAYS
+            hi = min(hi, max(lo, tail_days - 1))
+            climate_bump_day = rng.randint(lo, hi)
+            climate_bump_mag = rng.uniform(*config.CLIMATE_BUMP_MAGNITUDE)
+
+        viral_bumps: dict[int, float] = {}
+        if is_viral and tail_days >= 5:
+            n_bumps = rng.randint(*config.VIRAL_SECONDARY_BUMP_COUNT)
+            for _ in range(n_bumps):
+                bump_day = rng.randint(3, tail_days - 1)
+                viral_bumps[bump_day] = rng.uniform(
+                    *config.VIRAL_SECONDARY_BUMP_MAGNITUDE
+                )
+
+        reading_time_sec = word_count / 150.0 * 60.0  # ~150 wpm reading speed
+
+        for d in range(tail_days + 1):
+            noise = 0.80 + 0.40 * rng.random()
+            expected = _expected_day_views(peak, d, half_life, publish_hour)
+            views = int(expected * noise)
+            if d == climate_bump_day:
+                views += int(peak * climate_bump_mag * noise)
+            if d in viral_bumps:
+                views += int(peak * viral_bumps[d] * noise)
+            if views < config.MIN_PAGEVIEW_THRESHOLD:
+                continue
+
+            uniq_fraction = (
+                (0.70 + 0.15 * rng.random())
+                if d <= 3
+                else (0.80 + 0.15 * rng.random())
+            )
+            unique_visitors = max(1, int(views * uniq_fraction))
+
+            finish_rate = 0.30 + 0.40 * rng.random()
+            avg_time = reading_time_sec * finish_rate
+            scroll_depth = 40.0 + 50.0 * rng.random()
+
+            rows.append(
+                {
+                    "date": (publish_date + timedelta(days=d)).isoformat(),
+                    "article_id": aid,
+                    "pageviews": views,
+                    "unique_visitors": unique_visitors,
+                    "avg_time_on_page_sec": round(avg_time, 1),
+                    "scroll_depth_pct": round(scroll_depth, 1),
+                }
+            )
+
+    rows.sort(key=lambda r: (r["date"], r["article_id"]))
+    return rows, viral_ids
+
+
+def write_pageviews(conn: sqlite3.Connection, rows: list[dict]) -> None:
+    conn.executescript(PAGEVIEWS_DDL)
+    conn.executemany(
+        "INSERT INTO pageviews_daily (date, article_id, pageviews, "
+        "unique_visitors, avg_time_on_page_sec, scroll_depth_pct) "
+        "VALUES (:date, :article_id, :pageviews, :unique_visitors, "
+        ":avg_time_on_page_sec, :scroll_depth_pct)",
+        rows,
     )

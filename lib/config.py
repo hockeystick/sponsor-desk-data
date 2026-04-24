@@ -72,6 +72,51 @@ TAIL_DAYS_BY_SECTION: dict[str, tuple[int, int]] = {
 
 VIRAL_MULTIPLIER_RANGE: tuple[float, float] = (10.0, 30.0)
 
+# Typical day-1 peak pageviews per section. Per-article variation applied
+# via a log-normal multiplier with sigma PEAK_LOGNORMAL_SIGMA.
+PEAK_PAGEVIEWS_BY_SECTION: dict[str, int] = {
+    "actualidad":    1800,
+    "politica":      2800,
+    "clima":         3500,
+    "ciudades":      2400,
+    "investigacion": 5000,
+    "cultura":       1400,
+    "cafe_y_comida": 1500,
+    "opinion":       2000,
+}
+PEAK_LOGNORMAL_SIGMA: float = 0.55
+
+# Exponential decay half-life in days past day 1. Calibrated so the
+# section's typical tail length lands around the MIN_PAGEVIEW_THRESHOLD
+# cutoff given the peak size.
+HALF_LIFE_BY_SECTION: dict[str, float] = {
+    "actualidad":    1.0,
+    "politica":      1.5,
+    "clima":         4.5,
+    "ciudades":      3.5,
+    "investigacion": 8.0,
+    "cultura":       3.0,
+    "cafe_y_comida": 3.0,
+    "opinion":       1.0,
+}
+
+# Minimum pageviews to record a row. Below this, the article is effectively
+# dead for the day and we emit no row (matches the spec's "every day an
+# article got traffic").
+MIN_PAGEVIEW_THRESHOLD: int = 6
+
+# Climate pieces get republished around news events. This triggers a
+# secondary bump at a random day within CLIMATE_BUMP_DAYS for the share
+# of climate articles controlled by CLIMATE_BUMP_PROB.
+CLIMATE_BUMP_PROB: float = 0.30
+CLIMATE_BUMP_DAYS: tuple[int, int] = (14, 45)
+CLIMATE_BUMP_MAGNITUDE: tuple[float, float] = (0.3, 0.8)
+
+# Viral outliers get a longer tail plus 2-3 secondary bumps.
+VIRAL_TAIL_EXTENSION: tuple[float, float] = (1.5, 2.5)
+VIRAL_SECONDARY_BUMP_COUNT: tuple[int, int] = (2, 3)
+VIRAL_SECONDARY_BUMP_MAGNITUDE: tuple[float, float] = (0.5, 1.2)
+
 # Newsletter sizing + engagement.
 NEWSLETTER_LIST_SIZES: dict[str, int] = {
     "diario": 30_000,
