@@ -1,8 +1,9 @@
 [project]
 name = "sponsor-desk-data"
 version = "0.1.0"
-description = "Synthetic data generator for La Brújula news outlet and four fictional sponsors."
+description = "Synthetic data generator for The Cascade Tribune (Portland local news outlet) and four fictional sponsors."
 requires-python = ">=3.11"
+license = "MIT"
 dependencies = [
     "faker>=26.0",
     "pandas>=2.2",
