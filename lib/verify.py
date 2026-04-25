@@ -133,6 +133,30 @@ def _check_sponsor_tag_propagation(
     )
 
 
+def _check_inactive_sponsor_dates(
+    conn: sqlite3.Connection, out: list[tuple[str, bool, str]]
+) -> None:
+    """USAID Colombia and the NED reduced or ended Colombia operations
+    in 2025. They must not appear on campaigns ending after the cutoff."""
+    rules = (
+        ("USAID Colombia",                   "2025-02-01"),
+        ("National Endowment for Democracy", "2025-07-01"),
+    )
+    for sponsor, cutoff in rules:
+        bad = conn.execute(
+            "SELECT COUNT(*) FROM past_campaigns "
+            "WHERE sponsor_name = ? AND end_date >= ?",
+            (sponsor, cutoff),
+        ).fetchone()[0]
+        out.append(
+            (
+                f"{sponsor} not on campaigns ending >= {cutoff}",
+                bad == 0,
+                f"{bad} violation(s)",
+            )
+        )
+
+
 def _check_fk_integrity(
     conn: sqlite3.Connection, out: list[tuple[str, bool, str]]
 ) -> None:
@@ -172,6 +196,7 @@ def run(conn: sqlite3.Connection) -> None:
     _check_pv_sess_ratio(conn, results)
     _check_bridge_windows(conn, results)
     _check_sponsor_tag_propagation(conn, results)
+    _check_inactive_sponsor_dates(conn, results)
     _check_fk_integrity(conn, results)
     _check_send_eligibility(conn, results)
     _check_send_rates(conn, results)

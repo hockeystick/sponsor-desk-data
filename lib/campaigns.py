@@ -65,7 +65,9 @@ _SPONSORS_BY_SECTOR: dict[str, list[str]] = {
         "Fundación Bolívar Davivienda", "Fundación Aurelio Llano Posada",
         "Open Society Foundations", "Ford Foundation",
         "Fundación Carvajal", "National Endowment for Democracy",
-        "Fundación WWB Colombia",
+        "Fundación WWB Colombia", "Inter-American Foundation",
+        "Fundación Avina", "Konrad Adenauer Stiftung Colombia",
+        "Friedrich Ebert Stiftung Colombia",
     ],
     "consumer_brands": [
         "Nutresa", "Alpina", "Postobón", "Colombina",
@@ -80,15 +82,39 @@ _SPONSORS_BY_SECTOR: dict[str, list[str]] = {
     "tech": [
         "Rappi", "Platzi", "Lulo Bank", "Bold", "Habi",
         "Tpaga", "Tul", "Mercado Libre Colombia", "Habi Colombia",
+        "Nu Bank Colombia",
     ],
     "government_eu": [
         "Unión Europea en Colombia", "Embajada de Suecia",
         "Embajada de Francia", "Ministerio de Ambiente",
         "Alcaldía de Medellín", "Gobernación de Antioquia",
         "USAID Colombia", "Programa de las Naciones Unidas para el Desarrollo",
-        "Cancillería de Colombia",
+        "Cancillería de Colombia", "GIZ Colombia",
     ],
 }
+
+# Sponsors that ceased or substantially curtailed Colombia operations
+# during 2025. Allowed only for campaigns whose end_date is strictly
+# before the cutoff. Anything past the cutoff falls through to the
+# regular sector pool.
+#
+# - USAID Colombia: dismantled in early 2025; functions absorbed by
+#   the State Department. No new commitments after Jan 2025.
+# - National Endowment for Democracy: major funding cuts in 2025
+#   forced a sharp reduction in program activity from mid-year.
+_SPONSOR_END_DATE_CUTOFF: dict[str, str] = {
+    "USAID Colombia": "2025-02-01",
+    "National Endowment for Democracy": "2025-07-01",
+}
+
+
+def _eligible_sponsors(sector: str, end_date: str) -> list[str]:
+    pool = list(_SPONSORS_BY_SECTOR[sector])
+    return [
+        s for s in pool
+        if s not in _SPONSOR_END_DATE_CUTOFF
+        or end_date < _SPONSOR_END_DATE_CUTOFF[s]
+    ]
 
 # Sector ↔ preferred article sections for bridge linking.
 _SECTOR_PREFERRED_SECTIONS: dict[str, list[str]] = {
@@ -193,7 +219,6 @@ def build_campaigns(rng: random.Random) -> list[dict]:
     for campaign_id in range(1, config.CAMPAIGN_COUNT + 1):
         sector = _weighted_choice(rng, config.CAMPAIGN_SECTOR_WEIGHTS)
         fmt = _weighted_choice(rng, config.CAMPAIGN_FORMAT_WEIGHTS)
-        sponsor = rng.choice(_SPONSORS_BY_SECTOR[sector])
         start = _pick_start_date(rng)
         dur_lo, dur_hi = _FORMAT_DURATION_WEEKS[fmt]
         weeks = rng.randint(dur_lo, dur_hi)
@@ -201,6 +226,10 @@ def build_campaigns(rng: random.Random) -> list[dict]:
         if end > config.CAMPAIGNS_END:
             end = config.CAMPAIGNS_END
             weeks = max(1, (end - start).days // 7)
+        # Pick sponsor *after* end_date is known so the eligibility
+        # filter can drop sponsors whose Colombia operations had wound
+        # down by the campaign's end.
+        sponsor = rng.choice(_eligible_sponsors(sector, end.isoformat()))
         imp_lo, imp_hi = _FORMAT_IMPRESSIONS_RANGE[fmt]
         impressions = rng.randint(imp_lo, imp_hi)
         eng_lo, eng_hi = _FORMAT_ENGAGEMENT_RANGE[fmt]
