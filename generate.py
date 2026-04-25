@@ -1,8 +1,8 @@
 """Entrypoint for the synthetic-data generator.
 
 Running `uv run generate.py` recreates every artefact from a single seed:
-- data/labrujula.sqlite  (eight tables)
-- data/csv/*.csv         (one CSV per table)
+- data/cascade_tribune.sqlite  (eight tables)
+- data/csv/*.csv               (one CSV per table)
 - data/pricing_reference.md
 - data/CHECKSUMS.txt
 - sponsors/<slug>/ ...
@@ -17,8 +17,6 @@ import random
 import sqlite3
 from pathlib import Path
 
-from faker import Faker
-
 from lib import audience, campaigns, csv_export, newsletter, outlet, sponsors, verify
 from lib.config import SEED
 
@@ -26,7 +24,7 @@ ROOT: Path = Path(__file__).parent
 DATA_DIR: Path = ROOT / "data"
 CSV_DIR: Path = DATA_DIR / "csv"
 SPONSORS_DIR: Path = ROOT / "sponsors"
-SQLITE_PATH: Path = DATA_DIR / "labrujula.sqlite"
+SQLITE_PATH: Path = DATA_DIR / "cascade_tribune.sqlite"
 
 
 def _ensure_dirs() -> None:
@@ -47,8 +45,6 @@ def main() -> None:
     _ensure_dirs()
 
     rng = random.Random(SEED)
-    fake = Faker("es_CO")
-    fake.seed_instance(SEED)
 
     # Clean up prior artefacts so we never mix a half-regenerated run.
     if SQLITE_PATH.exists():

@@ -1,4 +1,4 @@
-"""Controlled vocabularies. The Colombian voice of the dataset lives here.
+"""Controlled vocabularies. The Portland voice of the dataset lives here.
 
 All lists must stay in deterministic order — they are iterated by position
 and any reorder will shift article assignments across a regenerated dataset.
@@ -6,474 +6,710 @@ and any reorder will shift article assignments across a regenerated dataset.
 from __future__ import annotations
 
 SECTIONS: list[str] = [
-    "actualidad",
-    "politica",
-    "clima",
-    "ciudades",
-    "investigacion",
-    "cultura",
-    "cafe_y_comida",
+    "city_hall",
+    "housing",
+    "climate",
+    "transportation",
+    "business",
+    "culture",
+    "food_drink",
     "opinion",
 ]
 
-# 48 topic tags spanning climate, urban, investigations, Colombian politics,
-# culture/coffee, and society.
+# 52 topic tags spanning Portland-specific civics, regional issues,
+# US-civic-life beats, climate/environment, transit, and culture/food.
+# Tags are deliberately specific — generic "politics" / "environment" tags
+# would be useless for the brief tool's audience-matching.
 TOPIC_TAGS: list[str] = [
-    # climate & environment (12)
-    "cambio_climatico", "deforestacion", "mineria_ilegal", "amazonia",
-    "paramos", "biodiversidad", "transicion_energetica", "contaminacion_aire",
-    "sequia", "rios_contaminados", "proteccion_ambiental", "cop_clima",
-    # urban / cities (10)
-    "transporte_publico", "metro", "vivienda", "espacio_publico",
-    "seguridad_urbana", "movilidad_electrica", "ciclorrutas", "gentrificacion",
-    "alcaldias", "servicios_publicos",
-    # investigations (6)
-    "corrupcion", "contratacion_publica", "narcotrafico", "paramilitares",
-    "lavado_activos", "justicia_transicional",
-    # Colombian political beats (8)
-    "acuerdo_de_paz", "gobierno_petro", "migracion_venezolana",
-    "violencia_de_genero", "politica_antidrogas", "eln",
-    "elecciones", "ddhh",
-    # culture, coffee, food (8)
-    "cafe_especial", "festivales", "gastronomia", "literatura",
-    "musica", "artesanias", "cine_colombiano", "identidad_regional",
-    # health & society (4)
-    "salud_publica", "educacion", "pobreza", "indigenas",
+    # city government & accountability (12)
+    "city_council", "mayors_office", "multnomah_county", "washington_county",
+    "clackamas_county", "ranked_choice_voting", "charter_reform", "city_audit",
+    "public_records", "ethics_commission", "police_oversight", "ppb_reform",
+    # housing & homelessness (10)
+    "zoning", "adu", "rent_stabilization", "evictions",
+    "homelessness", "supportive_housing", "encampments", "joint_office",
+    "housing_authority", "tenant_protections",
+    # climate & environment (10)
+    "wildfires", "fire_season", "atmospheric_river", "heat_dome",
+    "salmon", "columbia_river", "decarbonization", "gas_phaseout",
+    "climate_resilience", "oregon_climate_action_plan",
+    # transportation (8)
+    "trimet", "max_light_rail", "bike_infrastructure", "vision_zero",
+    "freight", "ev_charging", "parking_reform", "bridge_replacement",
+    # business & economy (5)
+    "small_business", "layoffs", "openings_closings", "downtown",
+    "port_of_portland",
+    # culture & food (10)
+    "indie_music", "performing_arts", "museums",
+    "lit_scene", "k12_arts",
+    "new_restaurants", "craft_beer", "wine_country",
+    "coffee_culture", "farmers_markets",
+    # cross-cutting Oregon civic life (5)
+    "measure_110", "fentanyl_crisis", "oregon_legislature",
+    "ballot_measures", "public_safety",
 ]
 
-# Tags that plausibly co-occur within a given section. Drives tag assignment
-# in the articles generator so a clima piece doesn't get tagged with
-# narcotrafico unless there's overlap reason to.
+# Tags that plausibly co-occur within a given section.
 SECTION_TAG_AFFINITY: dict[str, list[str]] = {
-    "actualidad": [
-        "gobierno_petro", "elecciones", "acuerdo_de_paz", "migracion_venezolana",
-        "ddhh", "seguridad_urbana", "salud_publica", "educacion", "alcaldias",
+    "city_hall": [
+        "city_council", "mayors_office", "multnomah_county", "washington_county",
+        "clackamas_county", "ranked_choice_voting", "charter_reform",
+        "city_audit", "public_records", "ethics_commission",
+        "police_oversight", "ppb_reform", "ballot_measures",
+        "oregon_legislature", "public_safety",
     ],
-    "politica": [
-        "gobierno_petro", "elecciones", "acuerdo_de_paz", "politica_antidrogas",
-        "eln", "ddhh", "justicia_transicional", "migracion_venezolana",
-        "alcaldias", "corrupcion",
+    "housing": [
+        "zoning", "adu", "rent_stabilization", "evictions",
+        "homelessness", "supportive_housing", "encampments", "joint_office",
+        "housing_authority", "tenant_protections", "city_council",
+        "multnomah_county",
     ],
-    "clima": [
-        "cambio_climatico", "deforestacion", "mineria_ilegal", "amazonia",
-        "paramos", "biodiversidad", "transicion_energetica", "contaminacion_aire",
-        "sequia", "rios_contaminados", "proteccion_ambiental", "cop_clima",
-        "indigenas",
+    "climate": [
+        "wildfires", "fire_season", "atmospheric_river", "heat_dome",
+        "salmon", "columbia_river", "decarbonization", "gas_phaseout",
+        "climate_resilience", "oregon_climate_action_plan",
+        "oregon_legislature",
     ],
-    "ciudades": [
-        "transporte_publico", "metro", "vivienda", "espacio_publico",
-        "seguridad_urbana", "movilidad_electrica", "ciclorrutas",
-        "gentrificacion", "alcaldias", "servicios_publicos",
-        "contaminacion_aire", "pobreza",
+    "transportation": [
+        "trimet", "max_light_rail", "bike_infrastructure", "vision_zero",
+        "freight", "ev_charging", "parking_reform", "bridge_replacement",
+        "city_council", "downtown",
     ],
-    "investigacion": [
-        "corrupcion", "contratacion_publica", "narcotrafico", "paramilitares",
-        "lavado_activos", "justicia_transicional", "mineria_ilegal",
-        "violencia_de_genero", "politica_antidrogas", "eln", "ddhh",
+    "business": [
+        "small_business", "layoffs", "openings_closings", "downtown",
+        "port_of_portland", "homelessness", "public_safety",
     ],
-    "cultura": [
-        "festivales", "literatura", "musica", "artesanias", "cine_colombiano",
-        "identidad_regional", "gastronomia",
+    "culture": [
+        "indie_music", "performing_arts", "museums",
+        "lit_scene", "k12_arts",
     ],
-    "cafe_y_comida": [
-        "cafe_especial", "gastronomia", "identidad_regional", "festivales",
-        "artesanias",
+    "food_drink": [
+        "new_restaurants", "craft_beer", "wine_country",
+        "coffee_culture", "farmers_markets", "openings_closings",
     ],
     "opinion": [
-        "gobierno_petro", "acuerdo_de_paz", "cambio_climatico",
-        "transporte_publico", "vivienda", "educacion", "ddhh",
-        "violencia_de_genero", "migracion_venezolana", "corrupcion",
+        "homelessness", "rent_stabilization", "trimet", "city_council",
+        "decarbonization", "fentanyl_crisis", "measure_110",
+        "ranked_choice_voting", "public_safety", "police_oversight",
     ],
 }
 
 # Beats held by authors, used as the author↔section routing key.
 BEATS: list[str] = [
-    "editorial", "climate", "urban", "investigations",
-    "culture", "politics", "news", "opinion",
+    "editorial", "city_hall", "housing", "climate",
+    "transportation", "business", "culture", "food",
+    "opinion", "investigations",
 ]
 
-# Preferred section for an article given its author's beat. The generator
-# uses the inverse: for a given section, weight candidate authors by how
-# strongly their beat points at that section.
+# Preferred section for an article given its author's beat.
 BEAT_SECTION_AFFINITY: dict[str, dict[str, float]] = {
-    "editorial":      {"opinion": 0.45, "actualidad": 0.25, "politica": 0.15,
-                       "clima": 0.10, "ciudades": 0.05},
-    "climate":        {"clima": 0.85, "investigacion": 0.08, "ciudades": 0.05,
+    "editorial":      {"opinion": 0.40, "city_hall": 0.20, "housing": 0.15,
+                       "climate": 0.10, "transportation": 0.08, "business": 0.07},
+    "city_hall":      {"city_hall": 0.78, "housing": 0.10, "transportation": 0.06,
+                       "business": 0.04, "opinion": 0.02},
+    "housing":        {"housing": 0.80, "city_hall": 0.12, "business": 0.04,
+                       "opinion": 0.04},
+    "climate":        {"climate": 0.82, "transportation": 0.06, "business": 0.04,
+                       "city_hall": 0.04, "opinion": 0.04},
+    "transportation": {"transportation": 0.78, "city_hall": 0.10, "climate": 0.06,
+                       "business": 0.04, "opinion": 0.02},
+    "business":       {"business": 0.74, "city_hall": 0.10, "housing": 0.06,
+                       "food_drink": 0.04, "transportation": 0.04, "opinion": 0.02},
+    "culture":        {"culture": 0.82, "food_drink": 0.10, "opinion": 0.04,
+                       "city_hall": 0.04},
+    "food":           {"food_drink": 0.78, "culture": 0.14, "business": 0.06,
                        "opinion": 0.02},
-    "urban":          {"ciudades": 0.80, "investigacion": 0.08, "politica": 0.07,
-                       "actualidad": 0.05},
-    "investigations": {"investigacion": 0.75, "politica": 0.15, "ciudades": 0.06,
-                       "clima": 0.04},
-    "culture":        {"cultura": 0.55, "cafe_y_comida": 0.35, "opinion": 0.05,
-                       "actualidad": 0.05},
-    "politics":       {"politica": 0.70, "actualidad": 0.20,
-                       "investigacion": 0.08, "opinion": 0.02},
-    "news":           {"actualidad": 0.70, "politica": 0.15, "ciudades": 0.10,
-                       "clima": 0.05},
-    "opinion":        {"opinion": 0.85, "actualidad": 0.05, "politica": 0.05,
-                       "cultura": 0.05},
+    "opinion":        {"opinion": 0.80, "city_hall": 0.06, "housing": 0.05,
+                       "climate": 0.05, "culture": 0.04},
+    "investigations": {"city_hall": 0.45, "housing": 0.20, "business": 0.15,
+                       "climate": 0.10, "transportation": 0.06, "opinion": 0.04},
 }
 
 # 22 fictional staff. Fields: (name, role, primary_beat, joined_at, is_active).
-# Joined dates span the outlet's history from founding (Jan 2018) to recent.
+# Spread across founding (Jan 2019) and recent hires.
 AUTHORS: list[tuple[str, str, str, str, bool]] = [
-    ("Carolina Restrepo Arango",    "editora_jefe",              "editorial",      "2018-01-15", True),
-    ("Mateo Ochoa Vélez",           "editor_clima",              "climate",        "2018-03-05", True),
-    ("Valentina Pérez Mendoza",     "reportera_clima",           "climate",        "2019-07-22", True),
-    ("Santiago Gómez Jaramillo",    "reportero_clima",           "climate",        "2021-02-10", True),
-    ("Laura Quintero Ríos",         "reportera_clima",           "climate",        "2022-09-01", True),
-    ("Andrés Cárdenas Torres",      "editor_ciudades",           "urban",          "2018-06-18", True),
-    ("Daniela Hoyos Vargas",        "reportera_ciudades",        "urban",          "2020-01-07", True),
-    ("Felipe Correa Salazar",       "reportero_ciudades",        "urban",          "2023-04-03", True),
-    ("Juliana Mejía Castaño",       "editora_investigaciones",   "investigations", "2018-09-10", True),
-    ("Sebastián Urrego Morales",    "reportero_investigaciones", "investigations", "2020-11-16", True),
-    ("Camila Parra Gutiérrez",      "reportera_investigaciones", "investigations", "2022-05-30", True),
-    ("Natalia Zapata Osorio",       "editora_cultura",           "culture",        "2019-02-01", True),
-    ("Tomás Herrera Londoño",       "reportero_cultura",         "culture",        "2021-08-23", True),
-    ("Isabella Acevedo Posada",     "reportera_cultura",         "culture",        "2023-10-12", True),
-    ("Diego Montoya Rendón",        "editor_politica",           "politics",       "2019-05-14", True),
-    ("Manuela Ramírez Cano",        "reportera_politica",        "politics",       "2021-06-07", True),
-    ("Esteban Duque Tobón",         "reportero_politica",        "politics",       "2024-01-22", True),
-    ("Alejandra Bedoya Franco",     "reportera_actualidad",      "news",           "2018-11-05", True),
-    ("Juan David Gallego Rivas",    "reportero_actualidad",      "news",           "2022-03-14", True),
-    ("Paulina Arboleda Giraldo",    "reportera_actualidad",      "news",           "2024-07-01", True),
-    ("Ricardo Cuervo Henao",        "columnista",                "opinion",        "2018-01-20", True),
-    ("Ana María Vélez Escobar",     "columnista",                "opinion",        "2020-04-18", True),
+    ("Maya Chen",            "editor_in_chief",          "editorial",      "2019-01-15", True),
+    ("Daniel Vasquez",       "city_hall_editor",         "city_hall",      "2019-02-20", True),
+    ("Tomas Rivera",         "climate_editor",           "climate",        "2019-03-10", True),
+    ("James Okafor",         "housing_editor",           "housing",        "2019-06-15", True),
+    ("Olivia Gallagher",     "transportation_editor",    "transportation", "2020-02-08", True),
+    ("Lily Anderson",        "culture_editor",           "culture",        "2020-09-12", True),
+    ("Rebecca Kim",          "city_hall_reporter",       "city_hall",      "2021-01-18", True),
+    ("Naomi Brennan",        "opinion_columnist",        "opinion",        "2021-04-22", True),
+    ("Alex Park",            "climate_reporter",         "climate",        "2021-07-30", True),
+    ("Marcus Johnson",       "city_hall_reporter",       "city_hall",      "2021-11-05", True),
+    ("Sophie Tran",          "business_editor",          "business",       "2022-02-14", True),
+    ("Elena Petrov",         "housing_reporter",         "housing",        "2022-06-09", True),
+    ("Henry Brooks",         "transportation_reporter",  "transportation", "2022-09-19", True),
+    ("David Nakamura",       "culture_reporter",         "culture",        "2023-01-10", True),
+    ("Tyler Knox",           "opinion_columnist",        "opinion",        "2023-03-22", True),
+    ("Liam O'Sullivan",      "climate_reporter",         "climate",        "2023-08-08", True),
+    ("Priya Iyer",           "food_reporter",            "food",           "2023-11-04", True),
+    ("Aisha Williams",       "housing_reporter",         "housing",        "2024-02-19", True),
+    ("Jordan Mitchell",      "food_editor",              "food",           "2024-05-13", True),
+    ("Pavel Becker",         "business_reporter",        "business",       "2024-08-26", True),
+    ("Rachel Goldberg",      "investigations_reporter",  "investigations", "2024-11-12", True),
+    ("Theo Walsh",           "investigations_reporter",  "investigations", "2025-03-04", True),
 ]
 
-# Colombia regions + their cities. Outlet is Medellín-based, so Antioquia
-# dominates and Bogotá follows.
-COLOMBIA_CITIES: list[tuple[str, str]] = [
-    ("Medellín", "Antioquia"),
-    ("Envigado", "Antioquia"),
-    ("Itagüí", "Antioquia"),
-    ("Bello", "Antioquia"),
-    ("Rionegro", "Antioquia"),
-    ("Bogotá", "Bogotá DC"),
-    ("Chía", "Cundinamarca"),
-    ("Soacha", "Cundinamarca"),
-    ("Cali", "Valle del Cauca"),
-    ("Palmira", "Valle del Cauca"),
-    ("Barranquilla", "Atlántico"),
-    ("Bucaramanga", "Santander"),
-    ("Cartagena", "Bolívar"),
-    ("Pereira", "Risaralda"),
-    ("Manizales", "Caldas"),
-    ("Armenia", "Quindío"),
+# Portland metro neighborhoods + Oregon cities + Pacific Northwest geography.
+PORTLAND_NEIGHBORHOODS: list[str] = [
+    "Pearl District", "Old Town", "Downtown", "Goose Hollow",
+    "Northwest", "Slabtown", "Hawthorne", "Belmont", "Sellwood",
+    "Foster-Powell", "Montavilla", "Lents", "St Johns", "Kenton",
+    "Alberta Arts", "Mississippi", "Boise", "Eliot",
+    "Hollywood", "Concordia", "Cully", "East Portland", "Centennial",
 ]
 
-# Weight per Colombia city. Medellín dominates, Bogotá a strong second.
-# Other regions grouped as low-share long tail.
-COLOMBIA_CITY_WEIGHTS: dict[str, float] = {
-    "Medellín": 0.34, "Bogotá": 0.28,
-    "Envigado": 0.055, "Itagüí": 0.045, "Bello": 0.045, "Rionegro": 0.020,
-    "Cali": 0.055, "Palmira": 0.010,
-    "Barranquilla": 0.035, "Bucaramanga": 0.028, "Cartagena": 0.022,
-    "Pereira": 0.020, "Manizales": 0.015, "Armenia": 0.010,
-    "Chía": 0.010, "Soacha": 0.010,
+OREGON_CITIES: list[tuple[str, str]] = [
+    # (city, state)
+    ("Portland", "OR"),
+    ("Beaverton", "OR"),
+    ("Hillsboro", "OR"),
+    ("Gresham", "OR"),
+    ("Tigard", "OR"),
+    ("Lake Oswego", "OR"),
+    ("Oregon City", "OR"),
+    ("Milwaukie", "OR"),
+    ("Salem", "OR"),
+    ("Eugene", "OR"),
+    ("Bend", "OR"),
+    ("Corvallis", "OR"),
+    ("Hood River", "OR"),
+    ("Astoria", "OR"),
+    ("Vancouver", "WA"),
+    ("Seattle", "WA"),
+    ("Tacoma", "WA"),
+    ("San Francisco", "CA"),
+    ("Oakland", "CA"),
+    ("Los Angeles", "CA"),
+    ("New York", "NY"),
+    ("Brooklyn", "NY"),
+]
+
+# Weighted distribution of US sessions by city. Calibrated so per-state
+# rollups land at: OR 62%, WA 14%, CA 10%, NY 3%, other states 10.4%.
+# Portland metro core (Portland + Beaverton + Hillsboro + Gresham +
+# Tigard + Lake Oswego + Oregon City + Milwaukie) accounts for ~52%.
+US_CITY_WEIGHTS: dict[str, float] = {
+    "Portland": 0.38,
+    "Beaverton": 0.04, "Hillsboro": 0.035, "Gresham": 0.035,
+    "Tigard": 0.02, "Lake Oswego": 0.018, "Oregon City": 0.012,
+    "Milwaukie": 0.012, "Salem": 0.022, "Eugene": 0.018,
+    "Bend": 0.018, "Corvallis": 0.008, "Hood River": 0.004, "Astoria": 0.004,
+    "Vancouver": 0.05, "Seattle": 0.075, "Tacoma": 0.015,
+    "San Francisco": 0.05, "Oakland": 0.025, "Los Angeles": 0.025,
+    "New York": 0.02, "Brooklyn": 0.01,
 }
+# US sessions where state is one of the long-tail "other" states (not OR,
+# WA, CA, or NY). Sum of US_CITY_WEIGHTS + this share = 1.0.
+US_OTHER_STATE_SHARE: float = 0.104
 
-# Diaspora cities where the outlet has meaningful audience.
+US_STATE_FOR_CITY: dict[str, str] = {city: state for city, state in OREGON_CITIES}
+
+# Diaspora cities for non-US countries.
 DIASPORA_CITIES_BY_COUNTRY: dict[str, list[str]] = {
-    "US": ["Miami", "New York", "Houston", "Los Angeles", "Orlando", "Atlanta"],
-    "ES": ["Madrid", "Barcelona", "Valencia", "Sevilla"],
-    "MX": ["Ciudad de México", "Guadalajara", "Monterrey"],
+    "CA": ["Vancouver BC", "Toronto", "Montreal"],
+    "UK": ["London", "Manchester"],
 }
-
-# Coffee domain — used in headlines, culture pieces, and Grupo Éxito Café
-# sponsor materials.
-COFFEE_VARIETALS: list[str] = [
-    "Caturra", "Castillo", "Gesha", "Tabi", "Typica",
-    "Bourbon Rosado", "Colombia", "Cenicafé 1", "Maragogipe", "Pacamara",
-]
-
-COFFEE_ORIGINS: list[str] = [
-    "Huila", "Nariño", "Tolima", "Cauca", "Santander",
-    "Antioquia", "Quindío", "Risaralda", "Caldas",
-]
 
 DEVICE_WEIGHTS: dict[str, float] = {
-    "mobile": 0.72, "desktop": 0.22, "tablet": 0.06,
+    "mobile": 0.66, "desktop": 0.28, "tablet": 0.06,
 }
 
 REFERRER_WEIGHTS: dict[str, float] = {
-    "search": 0.38, "social": 0.24, "direct": 0.20,
-    "newsletter": 0.12, "external": 0.06,
+    "search": 0.34, "social": 0.22, "direct": 0.24,
+    "newsletter": 0.16, "external": 0.04,
 }
 
 # ---- Headline assembly ------------------------------------------------------
-# Templates combined with vocab below produce Spanish editorial headlines
-# that read Colombian. Do not swap in faker sentence generators — they
-# produce genre-less filler.
+# US local-news register: declarative, factual, specific. No clickbait
+# patterns ("how X is changing Y"), no breathless launches, no LinkedIn
+# voice. Closer to the Texas Tribune / Baltimore Banner cadence.
 
 HEADLINE_TEMPLATES_BY_SECTION: dict[str, list[str]] = {
-    "actualidad": [
-        "{subject} en {place}: {aspect}",
-        "{entity} anuncia {program} tras {trigger}",
-        "Lo que dejó {event} en {place}",
-        "{entity} responde a {trigger}",
-        "Crece la tensión entre {actor_a} y {actor_b} por {issue}",
+    "city_hall": [
+        "City Council {council_action} {city_topic}",
+        "{official} {gov_verb} {city_topic} amid {context}",
+        "Multnomah County {county_action} after {trigger}",
+        "Audit finds {audit_finding} in {agency}",
+        "Portland's {city_topic} faces {hurdle}",
+        "Records show {records_finding} at {agency}",
+        "{official} clashes with {actor} over {city_topic}",
+        "{agency} budget would {budget_action} {budget_target}",
     ],
-    "politica": [
-        "{politician} frente a {issue}: {aspect}",
-        "El Congreso debate {bill}: quiénes votan a favor y quiénes en contra",
-        "Así avanza {reform} bajo el gobierno Petro",
-        "Qué hay detrás de la renuncia de {politician}",
-        "{institution} prepara {action} para responder a {trigger}",
+    "housing": [
+        "Portland's {housing_topic} hits {milestone}",
+        "Why {neighborhood} is seeing {housing_trend}",
+        "{housing_policy} clears another hurdle at {body}",
+        "Eviction filings {direction} in {area} as {context}",
+        "Inside the {project_type} planned for {area}",
+        "{housing_topic} report flags gap in {area}",
+        "Rent in {neighborhood}: {rent_finding}",
+        "Joint Office of Homeless Services {joint_action}",
     ],
-    "clima": [
-        "La crisis del agua en {place}: cinco claves",
-        "{amount} de {resource} bajo amenaza en {region}",
-        "Por qué {phenomenon} avanza más rápido en {region}",
-        "{community} defiende su {resource} frente a {threat}",
-        "El retroceso de los páramos: {region} en cifras",
-        "{project} y el costo ambiental que nadie cuenta",
+    "climate": [
+        "Heat wave {heat_action} four records as forecast tightens",
+        "Wildfire season {fire_trend} earlier than expected",
+        "Atmospheric river dumps {rain_amount} on Portland metro",
+        "{utility} {utility_action} amid {pressure}",
+        "Salmon counts on the {river} tell {salmon_story}",
+        "Oregon's {climate_policy} hits {policy_milestone}",
+        "Why {region} is {climate_change_pattern}",
+        "Climate scientists revise {forecast_target} after {context}",
     ],
-    "ciudades": [
-        "Metro de {city}: {aspect}",
-        "Vivienda en {city}: {aspect}",
-        "{city} intenta recuperar su espacio público",
-        "La nueva cara de {neighborhood}: ¿gentrificación o renovación?",
-        "Ciclorrutas en {city}: qué funciona y qué no",
-        "El transporte informal que sostiene a {city}",
-        "{neighborhood}, {city}: {aspect}",
-        "Por qué {city} sigue sin resolver su problema de {urban_issue}",
-        "El debate por {urban_project} en {city}",
-        "{city} replantea su política de {urban_issue}",
-        "Del POT al barrio: qué significa {urban_project} para {neighborhood}",
+    "transportation": [
+        "TriMet {transit_action} {transit_target}",
+        "Why {neighborhood} riders {transit_complaint}",
+        "{bike_project} clears {bike_milestone}",
+        "{bridge} replacement {bridge_status}",
+        "Pedestrian deaths on {road_corridor} up as {context}",
+        "Vision Zero report flags {vision_finding}",
+        "{transit_action} could {transit_consequence} in {area}",
     ],
-    "investigacion": [
-        "Seis meses rastreando {subject} en {region}",
-        "Los contratos que {entity} firmó con {counterparty}",
-        "Quién está detrás de {scheme} en {region}",
-        "La red que mueve {asset} entre {region} y {region_b}",
-        "Documentos revelan cómo {actor} operó en {place}",
+    "business": [
+        "{biz_subject} {biz_verb} {biz_object} amid {context}",
+        "Why {sector} is {biz_trend} in Portland",
+        "{biz_subject} cuts {n_jobs} jobs as {context}",
+        "Inside the {biz_type} reshaping {area}",
+        "{biz_subject} expands into {expansion_area}",
+        "{downtown_topic} returns as {context}",
     ],
-    "cultura": [
-        "{artist} vuelve a {city} con {work}",
-        "El mapa de los festivales en {region} este año",
-        "{work}: la obra que está marcando el año en {genre}",
-        "Cine colombiano: lo imperdible de {year}",
-        "{tradition} resiste en {place}",
+    "culture": [
+        "{artist} returns to {venue} with {work_descriptor}",
+        "Inside {neighborhood}'s {culture_scene}",
+        "{institution} announces {culture_announcement}",
+        "{festival} brings {festival_feature} to {area}",
+        "Why {institution} is {culture_action}",
+        "Local {culture_form}: {curator_take}",
     ],
-    "cafe_y_comida": [
-        "{varietal} de {origin}: por qué está ganando taza",
-        "La mesa del {region}: {dish} y sus variaciones",
-        "Cafés especiales en {city}: {count} lugares para probar",
-        "{producer} y el café que cambió su vereda",
-        "Del fogón al restaurante: {dish} en clave contemporánea",
+    "food_drink": [
+        "Inside the {food_type} reshaping {neighborhood}'s food scene",
+        "{restaurant_name} closes in {neighborhood} after {context}",
+        "{brewery_or_food_spot} opens in {area}",
+        "Why {origin} {beverage} is {beverage_trend}",
+        "{food_topic} guide: {food_finding}",
+        "The {meal_or_format} taking over {neighborhood}",
     ],
     "opinion": [
-        "Columna: {argument}",
-        "Lo que no estamos diciendo sobre {issue}",
-        "{issue}: tres preguntas incómodas",
-        "Por qué {position} (y qué perdemos si insistimos)",
-        "Carta abierta a {recipient}",
-        "{issue}: una agenda pendiente para {city}",
-        "Después de {event}: lo que aprendimos",
-        "¿A quién sirve el silencio sobre {issue}?",
-        "{argument} — y por qué importa ahora",
-        "Pensar {issue} desde {place}",
+        "Why {opinion_position}",
+        "Portland needs {opinion_call}",
+        "{opinion_topic}: a reckoning",
+        "Column: {opinion_argument}",
+        "What we're getting wrong about {opinion_topic}",
+        "{opinion_call} — and the politics making it harder",
     ],
 }
 
-# Filler vocabulary the templates pull from. Kept here (not faker) so output
-# stays deterministic and Colombian-flavoured.
+# Filler vocabulary the templates pull from.
 HEADLINE_FILLERS: dict[str, list[str]] = {
-    "subject": [
-        "la crisis de la salud pública", "la disputa por el agua",
-        "la llegada del metro", "el debate sobre la reforma pensional",
-        "la ola migratoria", "la contratación sospechosa",
-        "el retorno de los desplazados", "la protesta estudiantil",
-        "el alza de la gasolina", "la inseguridad urbana",
+    # ---- city_hall ----
+    "council_action": [
+        "narrowly advances", "tables", "amends", "rejects",
+        "fast-tracks", "delays vote on", "approves",
     ],
-    "aspect": [
-        "qué dice el informe", "lo que funcionó y lo que no",
-        "la letra pequeña", "cinco claves para entenderlo",
-        "voces desde el territorio", "los vacíos que quedan",
-        "qué sigue ahora", "la cronología", "tres preguntas pendientes",
+    "official": [
+        "Mayor Wheeler's office", "Mayor's office", "Commissioner Rubio",
+        "Commissioner Gonzalez", "Multnomah County Chair", "Council President",
+        "City Auditor", "City Attorney's office",
     ],
-    "entity": [
-        "La Alcaldía de Medellín", "El Ministerio de Ambiente",
-        "La Gobernación de Antioquia", "La Contraloría",
-        "La Procuraduría", "El DANE", "EPM", "La ANLA",
-        "La Defensoría del Pueblo", "La Fiscalía",
+    "gov_verb": [
+        "pushes back on", "signs off on", "questions",
+        "stalls", "fast-tracks", "calls for review of",
     ],
-    "program": [
-        "un nuevo plan de acción", "medidas de emergencia",
-        "un proceso de consulta", "una estrategia de mitigación",
-        "una mesa de diálogo", "una auditoría externa",
+    "city_topic": [
+        "the short-term rental fee hike", "the police accountability ordinance",
+        "the homelessness response budget", "the downtown revitalization plan",
+        "the camping ordinance", "the public records request backlog",
+        "the climate resilience plan", "the parking reform package",
+        "ranked-choice ballot design", "the lobbying disclosure rule",
+    ],
+    "context": [
+        "an audit", "court ruling", "ballot pressure",
+        "a public records release", "growing council split",
+        "rising service costs", "a state preemption fight",
+        "fall budget hearings",
+    ],
+    "county_action": [
+        "moves to take over the homeless services contract",
+        "shelves a behavioral health expansion",
+        "expands deflection court capacity",
+        "tightens rules on homelessness contracting",
+        "approves a jail diversion pilot",
     ],
     "trigger": [
-        "las denuncias de la comunidad", "el fallo de la Corte",
-        "las lluvias de abril", "la presión internacional",
-        "el paro de transportadores", "los hallazgos del informe",
+        "an audit", "a damning state report", "court ruling",
+        "a leaked memo", "rising overdose figures",
+        "a federal compliance deadline",
     ],
-    "event": [
-        "el paro camionero", "la consulta popular",
-        "la cumbre climática", "la audiencia pública",
-        "la marcha del 21N", "el debate en el Concejo",
+    "audit_finding": [
+        "missing payroll records", "millions in unspent funds",
+        "no oversight of vendor billings", "compliance gaps",
+        "inconsistent contract enforcement",
     ],
-    "place": [
-        "Medellín", "el Valle de Aburrá", "Bogotá", "Urabá",
-        "el Catatumbo", "La Guajira", "el Chocó", "el Putumayo",
-        "Antioquia", "la ruralidad antioqueña",
+    "agency": [
+        "Portland Bureau of Transportation", "Bureau of Planning",
+        "Joint Office of Homeless Services", "Bureau of Environmental Services",
+        "Multnomah County Health Department", "Portland Bureau of Emergency Management",
+        "Bureau of Development Services", "Portland Parks & Recreation",
     ],
-    "actor_a": ["la Alcaldía", "el Ministerio", "la Gobernación", "el sindicato"],
-    "actor_b": ["la ciudadanía", "los gremios", "la oposición", "el Gobierno Nacional"],
-    "issue": [
-        "el cobro de valorización", "el POT", "la tarifa de EPM",
-        "la política antidrogas", "la reforma tributaria",
-        "el manejo del río Medellín", "el sistema de salud",
+    "hurdle": [
+        "a council split", "PUC pushback",
+        "a county standoff", "a state preemption",
+        "an unresolved lawsuit",
     ],
-    "politician": [
-        "el presidente Petro", "la vicepresidenta Márquez",
-        "el alcalde Gutiérrez", "el gobernador Rendón",
-        "la ministra Muhamad", "la senadora Valencia",
+    "records_finding": [
+        "the contract was awarded without bids",
+        "internal emails warned of the cost overrun",
+        "the bureau missed reporting deadlines twice",
+        "officials knew about the leak in March",
     ],
-    "bill": [
-        "la reforma a la salud", "la reforma pensional",
-        "la ley de sometimiento", "el proyecto de paz total",
-        "la ley estatutaria de educación",
+    "actor": [
+        "the county", "the state", "the police union",
+        "the firefighters' union", "transit advocates",
+        "neighborhood associations",
     ],
-    "reform": [
-        "la reforma agraria", "la reforma a la salud",
-        "la paz total", "la transición energética",
-        "la reforma laboral",
+    "budget_action": ["cut", "freeze", "shift", "expand"],
+    "budget_target": [
+        "outreach contracts", "park maintenance", "shelter beds",
+        "transit subsidies", "office leases", "code enforcement staffing",
     ],
-    "institution": [
-        "La Registraduría", "El Consejo de Estado", "La Corte Constitucional",
-        "El Banco de la República", "El Consejo Nacional Electoral",
+    # ---- housing ----
+    "housing_topic": [
+        "permitting backlog", "ADU pipeline", "shelter capacity",
+        "supportive housing waitlist", "rent assistance pipeline",
+        "vacancy rate", "tenant protection caseload",
     ],
-    "action": [
-        "un pronunciamiento", "una investigación formal",
-        "una medida cautelar", "un llamado a sesión extraordinaria",
+    "milestone": [
+        "a new low", "the highest level on record",
+        "a six-year high", "the worst quarter since 2020",
+        "an all-time backlog", "a record streak",
     ],
-    "amount": [
-        "30 mil hectáreas", "el 40% del caudal", "tres especies endémicas",
-        "12 mil familias", "18 cuencas", "seis municipios",
+    "neighborhood": [
+        "the Pearl", "Sellwood", "St Johns", "Hawthorne",
+        "Alberta Arts", "Foster-Powell", "Lents", "Cully",
+        "Hollywood", "East Portland", "Belmont", "Mississippi",
     ],
-    "resource": [
-        "bosque seco tropical", "páramo", "humedal", "agua potable",
-        "cobertura vegetal", "biodiversidad",
+    "housing_trend": [
+        "a wave of new ADUs",
+        "a surge in eviction filings",
+        "more vacant storefronts than tenants",
+        "rents flatten for the first time in three years",
+        "a new wave of redevelopment",
+    ],
+    "housing_policy": [
+        "the inclusionary housing rule", "the relocation assistance ordinance",
+        "the camping enforcement ordinance", "the no-cause eviction ban",
+        "the tenant screening reform",
+    ],
+    "body": [
+        "the council", "Multnomah County", "the state legislature",
+        "the city auditor's review",
+    ],
+    "direction": ["climb", "fall", "level off"],
+    "area": [
+        "East Portland", "the Pearl", "Inner Southeast",
+        "North Portland", "Northeast Portland", "outer Southwest",
+        "the central city", "the eastside",
+    ],
+    "project_type": [
+        "200-unit affordable project", "transit-oriented development",
+        "shelter conversion", "modular supportive housing project",
+        "mixed-use complex",
+    ],
+    "rent_finding": [
+        "a five-year squeeze finally easing",
+        "the asking-rent gap has tripled",
+        "studios outpacing two-bedrooms for the first time",
+        "what concessions are now standard",
+    ],
+    "joint_action": [
+        "shifts $14 million to outreach contracts",
+        "hits a contracting wall with the county",
+        "reports first quarter under new leadership",
+        "drops a long-running shelter operator",
+    ],
+    # ---- climate ----
+    "heat_action": ["breaks", "ties", "approaches"],
+    "fire_trend": [
+        "starts five weeks earlier than the 30-year average",
+        "stretches deeper into October",
+        "is the longest of the decade so far",
+        "follows the third-driest spring on record",
+    ],
+    "rain_amount": [
+        "3.7 inches",
+        "more rain in 36 hours than September averages",
+        "a half-summer's rainfall",
+        "1.2 inches an hour at the peak",
+    ],
+    "utility": [
+        "Portland General Energy", "PacifiCorp", "NW Natural",
+        "Bonneville Power Administration", "Pacific Northwest grid operator",
+    ],
+    "utility_action": [
+        "files a 7.4% rate hike",
+        "warns of summer reliability gaps",
+        "cuts gas hookups in new construction",
+        "loses a key climate benchmark",
+        "delays a transmission build",
+    ],
+    "pressure": [
+        "PUC scrutiny", "ratepayer pushback",
+        "wildfire liability questions", "a coalition of environmental groups",
+        "a federal review",
+    ],
+    "river": [
+        "Columbia", "Willamette", "Sandy", "Clackamas",
+        "Tualatin", "Deschutes",
+    ],
+    "salmon_story": [
+        "a mixed recovery story",
+        "the worst run since 2018",
+        "what restoration is — and isn't — doing",
+        "habitat work is finally showing up",
+    ],
+    "climate_policy": [
+        "Climate Protection Program", "100% clean electricity rule",
+        "diesel idling reduction rule", "tribal co-management framework",
+    ],
+    "policy_milestone": [
+        "first compliance deadline",
+        "halfway mark on its emissions target",
+        "a court challenge",
+        "a stakeholder rewrite",
     ],
     "region": [
-        "Antioquia", "La Guajira", "el Chocó", "el Amazonas",
-        "el Magdalena Medio", "el Cauca", "el Putumayo",
-        "Norte de Santander", "el Valle del Cauca",
+        "Oregon", "the Willamette Valley", "Eastern Oregon",
+        "the Coast Range", "the Cascades", "the Columbia Gorge",
+        "Multnomah County", "the Hood River Valley",
     ],
-    "phenomenon": [
-        "la deforestación", "la sequía", "el retroceso glaciar",
-        "la contaminación del aire", "la pérdida de biodiversidad",
+    "climate_change_pattern": [
+        "warming faster than the rest of the state",
+        "losing snowpack two weeks earlier each decade",
+        "experiencing more 90-degree days each year",
+        "drying earlier in summer",
     ],
-    "community": [
-        "La comunidad wayuu",
-        "La asociación de campesinos de Urabá",
-        "La cooperativa de pescadores del Magdalena",
-        "El consejo comunitario del Pacífico",
-        "La guardia indígena del Cauca",
-        "La junta de acción comunal de Bojayá",
-        "La comunidad embera del Chocó",
-        "La mesa campesina del Catatumbo",
+    "forecast_target": [
+        "the summer outlook", "fire-season risk",
+        "salmon return projections", "ozone forecasts",
     ],
-    "threat": [
-        "la minería ilegal", "un proyecto de hidrocarburos",
-        "la expansión ganadera", "una concesión cuestionada",
+    # ---- transportation ----
+    "transit_action": [
+        "raises", "restructures", "freezes",
+        "extends", "cuts", "suspends",
     ],
-    "project": [
-        "Hidroituango", "el proyecto Quebradona",
-        "la ampliación del puerto de Buenaventura", "el bloque del Yarí",
+    "transit_target": [
+        "the base fare to $2.95",
+        "weekend MAX service",
+        "the FX bus rollout",
+        "low-income fare passes",
+        "downtown transfer rules",
     ],
-    "city": ["Medellín", "Bogotá", "Cali", "Bucaramanga", "Barranquilla", "Pereira"],
-    "neighborhood": [
-        "El Poblado", "Laureles", "Chapinero", "Usaquén",
-        "Granada", "Manga", "Prado", "San Antonio de Prado",
-        "Belén", "La Candelaria", "San Javier", "Castilla",
-        "Ciudad Bolívar", "Kennedy", "Teusaquillo",
+    "transit_complaint": [
+        "are paying the most under the new fare structure",
+        "wait longer for FX buses than promised",
+        "lost two stops in last month's restructure",
+        "say weekend cuts gut access to jobs",
     ],
-    "urban_issue": [
-        "movilidad", "vivienda asequible", "seguridad",
-        "espacio público", "gestión de residuos", "agua potable",
-        "servicios públicos", "ruido urbano",
+    "bike_project": [
+        "The 70s Greenway",
+        "The Naito Parkway protected lane",
+        "The Lloyd cycle track",
+        "The Outer Powell bike network",
+        "The Tilikum spine improvements",
     ],
-    "urban_project": [
-        "el Metro ligero de la 80", "Parques del Río",
-        "la Primera Línea del Metro de Bogotá",
-        "el Corredor Verde del Occidente", "el tranvía de Ayacucho",
-        "la renovación de Naranjal", "la reforma del POT",
+    "bike_milestone": [
+        "a key council vote",
+        "design review",
+        "the first round of construction",
+        "a ribbon cutting",
     ],
-    "counterparty": [
-        "contratistas del sector salud", "empresas de fachada",
-        "intermediarios del PAE", "operadores logísticos",
+    "bridge": [
+        "Burnside Bridge", "Hawthorne Bridge",
+        "I-5 bridge", "Sellwood Bridge",
     ],
-    "scheme": [
-        "el desvío de regalías", "el cartel de la hemofilia",
-        "la red de contratos sin licitar", "el esquema de testaferros",
+    "bridge_status": [
+        "moves to environmental review",
+        "hits its second cost overrun",
+        "could finally start in 2027",
+        "stalls amid funding gap",
     ],
-    "asset": ["oro de aluvión", "madera fina", "cocaína", "divisas"],
-    "region_b": ["el sur de Bolívar", "la frontera con Venezuela", "el Pacífico"],
-    "actor": [
-        "un contratista recurrente", "una fundación pantalla",
-        "un exalcalde", "un alto funcionario",
+    "road_corridor": [
+        "82nd Avenue", "Powell Boulevard", "Sandy Boulevard",
+        "Outer Division", "MLK", "TV Highway",
     ],
+    "vision_finding": [
+        "the deadliest year for pedestrians since 2017",
+        "speeding tickets are down despite enforcement push",
+        "high-injury network unchanged after five years",
+    ],
+    "transit_consequence": [
+        "save the agency $12 million",
+        "kill the East Portland night service",
+        "force a new round of route changes",
+    ],
+    # ---- business ----
+    "biz_subject": [
+        "Daimler Trucks NA", "Tektronix", "Adidas North America",
+        "Nike", "Lam Research", "Vacasa",
+        "On Semiconductor", "Stoel Rives",
+    ],
+    "biz_verb": [
+        "lays off", "expands", "moves",
+        "consolidates", "spins off", "buys",
+    ],
+    "biz_object": [
+        "its Beaverton operations", "headquarters staff",
+        "its DEI office", "its digital team",
+        "a regional office", "a logistics arm",
+    ],
+    "sector": [
+        "outdoor apparel", "semiconductors", "craft distilling",
+        "cannabis retail", "hospitality", "biotech",
+    ],
+    "biz_trend": [
+        "leaving the central city", "consolidating",
+        "raising wages faster than the metro average",
+        "betting on co-op ownership", "rebounding more slowly than expected",
+    ],
+    "n_jobs": ["120", "240", "60", "350", "90"],
+    "biz_type": [
+        "co-op grocery", "credit union", "worker-owned bakery",
+        "indie publisher", "mutual-aid hardware store",
+    ],
+    "expansion_area": [
+        "Beaverton", "Hillsboro", "Bend", "Eugene",
+        "the Tualatin Valley", "the Gorge",
+    ],
+    "downtown_topic": [
+        "Office occupancy", "weekend foot traffic",
+        "small business openings", "after-hours retail",
+    ],
+    # ---- culture ----
     "artist": [
-        "Adriana Lucía", "Juanes", "Carlos Vives", "Shakira",
-        "Totó la Momposina", "Lido Pimienta", "Herencia de Timbiquí",
+        "M. Ward", "Karl Blau", "Stephen Malkmus",
+        "The Decemberists", "Sleater-Kinney",
+        "Lael Neale", "Y La Bamba",
     ],
-    "work": [
-        "un nuevo álbum", "una obra de teatro", "un documental",
-        "una exposición fotográfica", "una gira por el país",
+    "venue": [
+        "the Crystal Ballroom", "Doug Fir", "Mississippi Studios",
+        "Revolution Hall", "Polaris Hall", "Aladdin Theater",
     ],
-    "genre": ["literatura", "cine", "música popular", "artes visuales"],
-    "year": ["2024", "2025"],
-    "tradition": [
-        "La marimba de chonta", "El sombrero vueltiao",
-        "Las fiestas de San Pacho", "La cumbia",
+    "work_descriptor": [
+        "a stripped-down new record",
+        "a four-night residency",
+        "a career-spanning retrospective",
+        "a return to chamber-pop form",
     ],
-    "varietal": [
-        "Caturra", "Castillo", "Gesha", "Tabi", "Bourbon Rosado", "Pacamara",
+    "culture_scene": [
+        "indie literary scene",
+        "experimental theater scene",
+        "queer punk scene",
+        "wood-and-clay craft revival",
     ],
-    "origin": ["Huila", "Nariño", "Tolima", "Cauca", "Antioquia"],
-    "dish": [
-        "la bandeja paisa", "el sancocho trifásico", "la arepa de chócolo",
-        "el ajiaco santafereño", "la lechona tolimense",
+    "institution": [
+        "Portland Art Museum", "Portland Center Stage",
+        "Powell's Books", "Oregon Symphony",
+        "the Portland Japanese Garden", "Literary Arts",
     ],
-    "count": ["ocho", "doce", "quince", "veinte"],
-    "producer": [
-        "Doña Amparo, caficultora de Salgar",
-        "Don Ernesto, caficultor de Jardín",
-        "La Asociación de Cafeteras de Andes",
-        "Ramiro Estrada, productor de Betulia",
+    "culture_announcement": [
+        "a new artistic director",
+        "a 30% expansion of K-12 programming",
+        "a free-day pilot for Title I schools",
+        "a strategic plan focused on regional artists",
     ],
-    "argument": [
-        "La paz total no puede ser un cheque en blanco",
-        "El metro de Bogotá nos cuesta más caro sin él",
-        "La transición energética tiene que empezar por los territorios",
-        "No hay periodismo local sin política pública",
-        "El extractivismo verde también es extractivismo",
-        "Lo que le debemos a los firmantes del Acuerdo",
-        "Una Medellín sin cuidados es una Medellín sin futuro",
-        "La diáspora también es Colombia",
-        "Sin datos abiertos no hay control ciudadano",
-        "La ciudad de los 15 minutos no es una moda, es una urgencia",
-        "Lo que falta en la conversación sobre seguridad",
-        "Reactivar el campo no es romantizarlo",
+    "festival": [
+        "Pickathon", "Wordstock", "PDX Jazz Festival",
+        "the Time-Based Art Festival", "Soul'd Out",
     ],
-    "position": [
-        "el POT de Medellín no resiste otra prórroga",
-        "la reforma a la salud necesita más debate público",
-        "la política antidrogas actual ya fracasó",
-        "la sustitución voluntaria sigue siendo el mejor camino",
-        "privatizar el río Medellín sería un retroceso histórico",
-        "frenar la consulta previa acelera los conflictos",
-        "la participación ciudadana no puede ser un trámite",
-        "el Fondo Paz Total necesita veeduría real",
+    "festival_feature": [
+        "an all-Oregon main stage",
+        "a two-day Japanese-American storytelling thread",
+        "a rare Karl Blau set",
+        "a dedicated kids' programming track",
     ],
-    "recipient": [
-        "la ministra de Ambiente", "el alcalde de Medellín",
-        "los candidatos a la Gobernación", "el director del SENA",
-        "la presidenta de la ANLA", "el gerente de EPM",
-        "los delegados de la COP", "la Registraduría",
-        "los firmantes del Acuerdo de Paz",
+    "culture_action": [
+        "rethinking its membership model",
+        "splitting from its longtime presenting partner",
+        "doubling down on regional artists",
+        "running a sliding-scale ticket pilot",
+    ],
+    "culture_form": [
+        "letterpress publishing", "experimental cinema",
+        "performance art", "small-press poetry",
+    ],
+    "curator_take": [
+        "what this year is doing differently",
+        "five works to watch",
+        "the curator's own picks",
+        "a quiet shift in the field",
+    ],
+    # ---- food_drink ----
+    "food_type": [
+        "cooperative bakery", "natural-wine bar",
+        "Sichuan night-market pop-up", "izakaya",
+        "Oaxacan tortillería", "pan-African café",
+    ],
+    "restaurant_name": [
+        "Le Pigeon", "Pok Pok", "Holdfast Dining",
+        "Beast", "Castagna", "Ava Gene's",
+        "Coquine", "Clyde Common",
+    ],
+    "brewery_or_food_spot": [
+        "Block 15 taproom", "Breakside satellite",
+        "Heater Allen tasting room", "Migration Brewing pop-up",
+        "a Detroit-style pizza joint", "a sandwich shop",
+    ],
+    "origin": [
+        "Yirgacheffe", "Sumatran", "Honduran",
+        "Burundian", "Ethiopian", "Guatemalan Antigua",
+    ],
+    "beverage": ["coffee", "espresso", "single-origin"],
+    "beverage_trend": [
+        "showing up everywhere this fall",
+        "back on Portland's roasters' menus",
+        "the cup of the season",
+        "rewriting the seasonal menu",
+    ],
+    "food_topic": [
+        "Friday-night neighborhood",
+        "winter farmers' market",
+        "Inner Eastside lunch",
+        "weekend brunch", "natural-wine",
+    ],
+    "food_finding": [
+        "five spots, all under $20",
+        "what's actually new", "what's worth the wait",
+        "where chefs are eating",
+    ],
+    "meal_or_format": [
+        "happy hour", "single-origin pour-over",
+        "two-stop bar crawl", "weekday lunch counter",
+    ],
+    # ---- opinion ----
+    "opinion_position": [
+        "the camping ordinance won't fix what it was built for",
+        "ranked-choice voting needs a real public-education investment",
+        "the Joint Office can't be both a shelter operator and a contracting authority",
+        "Portland's bike network needs to stop pretending the eastside doesn't exist",
+        "Powell's Books is a civic institution and we should fund it like one",
+    ],
+    "opinion_call": [
+        "an honest conversation about deflection",
+        "a property-tax reform that holds up",
+        "a transit funding model that doesn't break with every recession",
+        "a climate plan with teeth",
+    ],
+    "opinion_topic": [
+        "homelessness", "Measure 110",
+        "Portland's downtown", "ranked-choice voting",
+        "school closures",
+    ],
+    "opinion_argument": [
+        "the camping ordinance is doing the opposite of what its supporters claim",
+        "Measure 110's repeal didn't fix what it was meant to fix",
+        "the city's outreach contracts are a structural conflict of interest",
+        "we keep mistaking visibility for success in homeless services",
     ],
 }

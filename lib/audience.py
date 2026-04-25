@@ -3,14 +3,17 @@
 Emits one row per (date, country, region, city, language, device,
 referrer_type) combo where sessions clear MIN_AUDIENCE_SESSIONS.
 
-Colombia is the only country with city/region breakdown; diaspora
-traffic (US/ES/MX) is split across top diaspora cities but left at
-region=NULL; the `other` bucket is country-level only.
+For US sessions:
+- Top cities (Portland metro, Salem, Eugene, Bend, plus diaspora hubs in
+  WA/CA/NY) get city-level granularity with state in the `region` column.
+- Long-tail US states roll up to a single (region='other_state', city=NULL)
+  bucket.
 
-The day's total sessions is derived from that day's article pageviews
-× SESSION_PAGEVIEW_RATIO, so the audience table is internally
-consistent with `pageviews_daily` — the phase 8 verifier enforces this
-relationship.
+Non-US (CA, UK, other) is country-level — region=NULL — with optional
+top diaspora cities for CA and UK.
+
+Daily totals derive from the day's article pageviews × SESSION_PAGEVIEW_RATIO,
+keeping the audience table consistent with `pageviews_daily`.
 """
 from __future__ import annotations
 
@@ -37,15 +40,21 @@ CREATE INDEX idx_aud_country ON audience_daily(country);
 """
 
 
-def _city_to_region() -> dict[str, str]:
-    return {city: region for city, region in vocab.COLOMBIA_CITIES}
-
-
 def _daily_pageview_totals(conn: sqlite3.Connection) -> dict[str, int]:
     rows = conn.execute(
         "SELECT date, SUM(pageviews) FROM pageviews_daily GROUP BY date"
     ).fetchall()
     return {date: total for date, total in rows}
+
+
+# Spanish share by country. Mostly English; a small Latino segment in
+# East Portland reads in Spanish.
+_ES_SHARE_BY_COUNTRY: dict[str, float] = {
+    "US":    0.025,
+    "CA":    0.005,
+    "UK":    0.000,
+    "other": 0.10,
+}
 
 
 def _emit_combos(
@@ -57,9 +66,11 @@ def _emit_combos(
     city: str | None,
     sessions_pool: float,
 ) -> None:
-    en_share = config.LANGUAGE_EN_SHARE_BY_COUNTRY[country]
-    lang_shares = [("es", 1.0 - en_share), ("en", en_share)]
+    es_share = _ES_SHARE_BY_COUNTRY[country]
+    lang_shares = [("en", 1.0 - es_share), ("es", es_share)]
     for lang, lw in lang_shares:
+        if lw <= 0:
+            continue
         for device, dw in vocab.DEVICE_WEIGHTS.items():
             for referrer, rw in vocab.REFERRER_WEIGHTS.items():
                 expected = sessions_pool * lw * dw * rw
@@ -86,12 +97,11 @@ def _emit_combos(
                 )
 
 
+# Top diaspora cities for non-US countries. Rest of country rolls up
+# to a country-level row with city=NULL.
 _DIASPORA_CITY_WEIGHTS: dict[str, list[tuple[str, float]]] = {
-    # For US/ES/MX, top diaspora cities take fixed shares; rest falls to
-    # a single "rest-of-country" row with city=None.
-    "US": [("Miami", 0.45), ("New York", 0.22), ("Houston", 0.15)],
-    "ES": [("Madrid", 0.55), ("Barcelona", 0.25)],
-    "MX": [("Ciudad de México", 0.60), ("Guadalajara", 0.20)],
+    "CA": [("Vancouver BC", 0.42), ("Toronto", 0.20)],
+    "UK": [("London", 0.55)],
 }
 
 
@@ -99,7 +109,6 @@ def build_audience_daily(
     rng: random.Random, conn: sqlite3.Connection
 ) -> list[dict]:
     pv_by_date = _daily_pageview_totals(conn)
-    city_region = _city_to_region()
     rows: list[dict] = []
 
     for date in sorted(pv_by_date.keys()):
@@ -111,20 +120,28 @@ def build_audience_daily(
         for country, cw in config.COUNTRY_WEIGHTS.items():
             pool = daily_sessions * cw
 
-            if country == "CO":
-                for city, city_w in vocab.COLOMBIA_CITY_WEIGHTS.items():
+            if country == "US":
+                # Iterate named cities; their state lives in `region`.
+                for city, city_w in vocab.US_CITY_WEIGHTS.items():
+                    state = vocab.US_STATE_FOR_CITY[city]
                     _emit_combos(
-                        rng, rows, date, country,
-                        city_region[city], city, pool * city_w,
+                        rng, rows, date, country, state, city, pool * city_w,
                     )
+                # Remainder = the long tail of other US states.
+                _emit_combos(
+                    rng, rows, date, country,
+                    "other_state", None,
+                    pool * vocab.US_OTHER_STATE_SHARE,
+                )
             elif country == "other":
                 _emit_combos(rng, rows, date, country, None, None, pool)
             else:
-                diaspora = _DIASPORA_CITY_WEIGHTS[country]
+                diaspora = _DIASPORA_CITY_WEIGHTS.get(country, [])
                 named_share = sum(w for _, w in diaspora)
                 for city, w in diaspora:
-                    _emit_combos(rng, rows, date, country, None, city, pool * w)
-                # Remainder goes to country-level rest-of-country bucket.
+                    _emit_combos(
+                        rng, rows, date, country, None, city, pool * w,
+                    )
                 _emit_combos(
                     rng, rows, date, country, None, None,
                     pool * (1.0 - named_share),

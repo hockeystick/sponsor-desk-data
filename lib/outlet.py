@@ -12,7 +12,6 @@ import math
 import random
 import re
 import sqlite3
-import unicodedata
 from datetime import date, datetime, time, timedelta
 
 from lib import config, vocab
@@ -32,14 +31,13 @@ ARTICLES_DDL = """
 CREATE TABLE articles (
     article_id    INTEGER PRIMARY KEY,
     url           TEXT NOT NULL,
-    headline_es   TEXT NOT NULL,
-    headline_en   TEXT,
+    headline      TEXT NOT NULL,
     section       TEXT NOT NULL,
     topic_tags    TEXT NOT NULL,
     published_at  TEXT NOT NULL,
     author_id     INTEGER NOT NULL REFERENCES authors(author_id),
     word_count    INTEGER NOT NULL,
-    language      TEXT NOT NULL DEFAULT 'es',
+    language      TEXT NOT NULL DEFAULT 'en',
     sponsor_tag   TEXT
 );
 CREATE INDEX idx_articles_section ON articles(section);
@@ -60,34 +58,22 @@ CREATE TABLE pageviews_daily (
 CREATE INDEX idx_pv_date ON pageviews_daily(date);
 """
 
-# Article length bands by section. Investigations are long-form;
-# opinion and actualidad stay tight.
+# Article length bands by section. City-hall and housing accountability
+# pieces run longer; food/drink coverage stays tight.
 WORD_COUNT_RANGES: dict[str, tuple[int, int]] = {
-    "actualidad":    (400, 800),
-    "politica":      (500, 1100),
-    "clima":         (900, 1800),
-    "ciudades":      (700, 1500),
-    "investigacion": (1800, 3500),
-    "cultura":       (600, 1200),
-    "cafe_y_comida": (700, 1300),
-    "opinion":       (800, 1400),
-}
-
-_EN_SECTION_LABEL: dict[str, str] = {
-    "actualidad":    "Colombia News",
-    "politica":      "Politics",
-    "clima":         "Climate Coverage",
-    "ciudades":      "Cities",
-    "investigacion": "Investigation",
-    "cultura":       "Culture",
-    "cafe_y_comida": "Coffee & Food",
-    "opinion":       "Opinion",
+    "city_hall":      (700, 1700),
+    "housing":        (700, 1600),
+    "climate":        (700, 1500),
+    "transportation": (550, 1100),
+    "business":       (500,  900),
+    "culture":        (500, 1000),
+    "food_drink":     (450,  900),
+    "opinion":        (700, 1300),
 }
 
 
 def _slugify(text: str) -> str:
-    stripped = unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode("ascii")
-    lowered = stripped.lower()
+    lowered = text.lower()
     slug = re.sub(r"[^a-z0-9]+", "-", lowered).strip("-")
     return slug[:60]
 
@@ -105,8 +91,6 @@ def _weighted_choice(rng: random.Random, mapping: dict[str, float]) -> str:
 
 
 def build_authors(rng: random.Random) -> list[dict]:
-    # Seeded RNG intentionally unused — author list is fully specified in
-    # vocab. Kept in the signature for parity with other generators.
     del rng
     return [
         {
@@ -124,12 +108,6 @@ def build_authors(rng: random.Random) -> list[dict]:
 def _build_author_weights_by_section(
     authors: list[dict],
 ) -> dict[str, list[tuple[int, float]]]:
-    """For each section, candidate authors with per-author weight.
-
-    Weight derives from the author's beat via `BEAT_SECTION_AFFINITY`.
-    Sections with no beat pointing at them would be unreachable — all
-    eight sections are covered by design.
-    """
     result: dict[str, list[tuple[int, float]]] = {s: [] for s in vocab.SECTIONS}
     for a in authors:
         affinity = vocab.BEAT_SECTION_AFFINITY.get(a["primary_beat"], {})
@@ -164,28 +142,20 @@ def _pick_tags(rng: random.Random, section: str) -> list[str]:
 
 def _pick_published_at(rng: random.Random, day: date) -> datetime:
     r = rng.random()
-    if r < 0.30:      # morning roundup
-        hour = rng.randint(7, 11)
-    elif r < 0.55:    # lunch slot
-        hour = rng.randint(12, 13)
-    elif r < 0.80:    # evening push
-        hour = rng.randint(17, 19)
-    else:
-        hour = rng.choice([6, 14, 15, 16, 20, 21])
+    if r < 0.32:      # morning brief slot, 7-11
+        hour = rng.randint(7, 10)
+    elif r < 0.55:    # midday, 11-14
+        hour = rng.randint(11, 13)
+    elif r < 0.82:    # afternoon push, 15-18
+        hour = rng.randint(15, 17)
+    else:             # late, evening
+        hour = rng.choice([6, 14, 18, 19, 20])
     return datetime.combine(day, time(hour, rng.randint(0, 59), rng.randint(0, 59)))
 
 
-_CONTRACTION_RULES: list[tuple[re.Pattern[str], str]] = [
-    (re.compile(r"\ba\s+el\b"),  "al"),
-    (re.compile(r"\bde\s+el\b"), "del"),
-]
-
-
 def _post_process_headline(text: str) -> str:
-    for pattern, replacement in _CONTRACTION_RULES:
-        text = pattern.sub(replacement, text)
-    # Capitalize the first letter — templates can start with a lowercase
-    # filler token (e.g. {project} pulling "la ampliación…").
+    # US headlines capitalize first letter; templates may start with a
+    # lowercase filler so normalize after rendering.
     if text and text[0].islower():
         text = text[0].upper() + text[1:]
     return text
@@ -202,17 +172,7 @@ def _render_headline(rng: random.Random, section: str) -> str:
         if not pool:
             raise RuntimeError(f"Missing filler vocabulary for placeholder {p!r}")
         subs[p] = rng.choice(pool)
-    if subs.get("region") and subs.get("region_b") == subs.get("region"):
-        alts = [r for r in vocab.HEADLINE_FILLERS["region_b"] if r != subs["region"]]
-        if alts:
-            subs["region_b"] = rng.choice(alts)
     return _post_process_headline(template.format(**subs))
-
-
-def _english_headline(section: str, tags: list[str]) -> str:
-    label = _EN_SECTION_LABEL[section]
-    topic = tags[0].replace("_", " ").title() if tags else label
-    return f"{label}: {topic}"
 
 
 def _articles_per_day(rng: random.Random, d: date) -> int:
@@ -235,31 +195,26 @@ def build_articles(rng: random.Random, authors: list[dict]) -> list[dict]:
             section = _weighted_choice(rng, config.SECTION_WEIGHTS)
             author_id = _pick_author_for_section(rng, author_weights[section])
             tags = _pick_tags(rng, section)
-            headline_es = _render_headline(rng, section)
-            if rng.random() < config.TRANSLATION_FLAG_SHARE:
-                headline_en: str | None = _english_headline(section, tags)
-            else:
-                headline_en = None
+            headline = _render_headline(rng, section)
             published_at = _pick_published_at(rng, d)
             wc_lo, wc_hi = WORD_COUNT_RANGES[section]
             word_count = rng.randint(wc_lo, wc_hi)
-            slug = _slugify(headline_es) or section
+            slug = _slugify(headline) or section
             url = (
-                f"https://labrujula.co/{section}/{d.year:04d}/{d.month:02d}/"
+                f"https://cascadetribune.com/{section}/{d.year:04d}/{d.month:02d}/"
                 f"{slug}-{aid}"
             )
             articles.append(
                 {
                     "article_id": aid,
                     "url": url,
-                    "headline_es": headline_es,
-                    "headline_en": headline_en,
+                    "headline": headline,
                     "section": section,
-                    "topic_tags": json.dumps(tags, ensure_ascii=False),
+                    "topic_tags": json.dumps(tags),
                     "published_at": published_at.isoformat(timespec="seconds"),
                     "author_id": author_id,
                     "word_count": word_count,
-                    "language": "es",
+                    "language": "en",
                     "sponsor_tag": None,
                 }
             )
@@ -279,9 +234,9 @@ def write_authors(conn: sqlite3.Connection, authors: list[dict]) -> None:
 def write_articles(conn: sqlite3.Connection, articles: list[dict]) -> None:
     conn.executescript(ARTICLES_DDL)
     conn.executemany(
-        "INSERT INTO articles (article_id, url, headline_es, headline_en, section, "
+        "INSERT INTO articles (article_id, url, headline, section, "
         "topic_tags, published_at, author_id, word_count, language, sponsor_tag) "
-        "VALUES (:article_id, :url, :headline_es, :headline_en, :section, "
+        "VALUES (:article_id, :url, :headline, :section, "
         ":topic_tags, :published_at, :author_id, :word_count, :language, :sponsor_tag)",
         articles,
     )
@@ -289,14 +244,15 @@ def write_articles(conn: sqlite3.Connection, articles: list[dict]) -> None:
 
 # ---- pageviews_daily --------------------------------------------------------
 
-_VIRAL_PREFERRED_SECTIONS: set[str] = {"investigacion", "clima", "opinion", "politica"}
+# Long-form / accountability / opinion pieces tend to go viral.
+_VIRAL_PREFERRED_SECTIONS: set[str] = {
+    "city_hall", "housing", "climate", "opinion",
+}
 
 
 def _pick_viral_article_ids(
     rng: random.Random, articles: list[dict]
 ) -> set[int]:
-    """One viral per calendar quarter; prefer long-form / politically heavy
-    sections so the variance lands where it's plausible."""
     by_quarter: dict[tuple[int, int], list[dict]] = {}
     for a in articles:
         d = date.fromisoformat(a["published_at"][:10])
@@ -312,8 +268,6 @@ def _pick_viral_article_ids(
 
 
 def _expected_day_views(peak: int, day: int, half_life: float, publish_hour: int) -> float:
-    """peak is the day-1 value. Day 0 is a partial day scaled by remaining
-    hours; days >=2 decay exponentially with section half-life."""
     if day == 0:
         hours_remaining = max(1, 24 - publish_hour)
         return peak * 0.55 * (hours_remaining / 24)
@@ -325,7 +279,6 @@ def _expected_day_views(peak: int, day: int, half_life: float, publish_hour: int
 def build_pageviews(
     rng: random.Random, articles: list[dict]
 ) -> tuple[list[dict], set[int]]:
-    """Return (rows, viral_ids). viral_ids is surfaced so the CLI can log it."""
     viral_ids = _pick_viral_article_ids(rng, articles)
     rows: list[dict] = []
 
@@ -354,7 +307,7 @@ def build_pageviews(
 
         climate_bump_day = -1
         climate_bump_mag = 0.0
-        if section == "clima" and rng.random() < config.CLIMATE_BUMP_PROB:
+        if section == "climate" and rng.random() < config.CLIMATE_BUMP_PROB:
             lo, hi = config.CLIMATE_BUMP_DAYS
             hi = min(hi, max(lo, tail_days - 1))
             climate_bump_day = rng.randint(lo, hi)
@@ -369,7 +322,7 @@ def build_pageviews(
                     *config.VIRAL_SECONDARY_BUMP_MAGNITUDE
                 )
 
-        reading_time_sec = word_count / 150.0 * 60.0  # ~150 wpm reading speed
+        reading_time_sec = word_count / 200.0 * 60.0  # ~200 wpm for English news
 
         for d in range(tail_days + 1):
             noise = 0.80 + 0.40 * rng.random()

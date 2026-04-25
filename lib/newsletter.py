@@ -1,15 +1,17 @@
 """Newsletter subscribers and sends.
 
-Subscribers model: 45,000 IDs with hashed identifiers, growth-curve
-subscribed_at dates across the outlet's history (Jan 2018 to Dec 2025),
-country/language/engagement metadata, and 1-3 newsletter opt-ins
-weighted so aggregate opt-ins roughly match target list sizes.
+Two newsletters:
+- The Daily Cascade — weekday morning roundup, largest list (~38k)
+- Plate & Place — weekly Friday food and culture letter, smaller (~22k)
 
-Sends model: one row per (newsletter, send_date). Diario Mon-Fri,
-Verde Thursdays, Sobremesa Saturdays — within the 24-month window.
-Recipients at send time = opted-in subscribers whose subscribed_at
-predates the send. Natural growth over the window (the Jan 2024
-Diario send reaches ~23k; the Dec 2025 Diario send reaches ~30k).
+Subscribers: 45,000 IDs with hashed identifiers, growth-curve subscribed_at
+dates 2019-2025, US-heavy country mix, 50/35/15 cold/warm/hot engagement,
+1-2 newsletter opt-ins weighted so total opt-ins approximate the sum of
+list size targets.
+
+Sends: one row per (newsletter, send_date). Daily Cascade Mon-Fri,
+Plate & Place Fridays. Recipients at send time = opted-in subscribers
+whose subscribed_at predates the send.
 """
 from __future__ import annotations
 
@@ -41,7 +43,7 @@ CREATE TABLE newsletter_sends (
     send_id           INTEGER PRIMARY KEY,
     newsletter        TEXT NOT NULL,
     send_date         TEXT NOT NULL,
-    subject_line_es   TEXT NOT NULL,
+    subject_line      TEXT NOT NULL,
     recipients        INTEGER NOT NULL,
     opens             INTEGER NOT NULL,
     unique_opens      INTEGER NOT NULL,
@@ -53,83 +55,78 @@ CREATE INDEX idx_send_newsletter ON newsletter_sends(newsletter);
 CREATE INDEX idx_send_date ON newsletter_sends(send_date);
 """
 
-_FOUNDING_DATE = date(2018, 1, 15)
+_FOUNDING_DATE = date(2019, 1, 15)
 
 _SEND_WEEKDAYS: dict[str, set[int]] = {
-    "diario":    {0, 1, 2, 3, 4},     # Mon-Fri
-    "verde":     {3},                 # Thursday
-    "sobremesa": {5},                 # Saturday
+    "daily_cascade": {0, 1, 2, 3, 4},  # Mon-Fri
+    "plate_place":   {4},              # Friday
 }
 
-_DIARIO_SUBJECTS: list[str] = [
-    "Hoy en La Brújula: {topic}",
-    "El resumen del día",
-    "Diario: {topic}",
-    "Lo que debes leer hoy en Colombia",
-    "Un vistazo al país — {topic}",
-    "Buenas tardes desde Medellín",
-    "Tu resumen del {weekday}",
-    "Cinco historias para hoy",
-    "La mañana en Colombia: {topic}",
-    "Hoy en portada — {topic}",
+_DAILY_CASCADE_SUBJECTS: list[str] = [
+    "The Daily Cascade — {topic}",
+    "Today in Portland: {topic}",
+    "Your morning briefing on {topic}",
+    "What we're watching at City Hall today",
+    "Five stories to start your day",
+    "Daily Cascade: {topic}",
+    "The Cascade — {weekday} morning edition",
+    "Inside today's news: {topic}",
+    "Portland this morning: {topic}",
+    "The brief: {topic}",
 ]
 
-_VERDE_SUBJECTS: list[str] = [
-    "Verde: {topic}",
-    "La semana del clima: {topic}",
-    "Alerta verde — {topic}",
-    "Lo urgente en clima: {topic}",
-    "Esta semana en biodiversidad",
-    "Verde · {topic}",
-    "El balance ambiental de la semana",
-    "Una semana en la crisis climática",
+_PLATE_PLACE_SUBJECTS: list[str] = [
+    "Plate & Place: {topic}",
+    "This weekend in Portland's food scene",
+    "Plate & Place — where to eat this weekend",
+    "Where we're eating, drinking, and going",
+    "Plate & Place: {topic}",
+    "The Friday food letter",
+    "Pour-over picks and weekend plans",
+    "Where Portland eats this week",
 ]
 
-_SOBREMESA_SUBJECTS: list[str] = [
-    "Sobremesa: {topic}",
-    "Esta semana probamos: {topic}",
-    "Café, comida y cultura: {topic}",
-    "La mesa de Sobremesa",
-    "Para el fin de semana: {topic}",
-    "Sobremesa · {topic}",
-    "Entre tazas y fogones",
-    "Lo que está pasando en la cocina colombiana",
+_DAILY_TOPICS: list[str] = [
+    "the camping ordinance vote",
+    "the Joint Office shake-up",
+    "the rent stabilization fight",
+    "PGE's rate hike filing",
+    "Multnomah County's audit findings",
+    "the Burnside Bridge plan",
+    "the FX bus rollout",
+    "ranked-choice tabulation",
+    "downtown's slow comeback",
+    "Powell Boulevard pedestrian deaths",
+    "the Joint Office contract",
+    "salmon runs on the Sandy",
+    "wildfire smoke advisories",
+    "the climate plan rewrite",
 ]
 
-_DIARIO_TOPICS: list[str] = [
-    "reforma a la salud", "paro camionero", "elecciones locales",
-    "Hidroituango", "POT de Medellín", "paz total",
-    "reforma pensional", "tarifas de EPM", "la consulta popular",
-    "el metro ligero", "migración venezolana", "presupuesto nacional",
-    "Corte Constitucional", "la agenda del Congreso",
+_PLATE_TOPICS: list[str] = [
+    "a new Sichuan pop-up in St Johns",
+    "the cooperative bakery on Alberta",
+    "Sumatran roasts to seek out",
+    "weekend wine bar picks",
+    "the natural-wine list everyone's talking about",
+    "where chefs are eating right now",
+    "a Burundian café opens in Foster-Powell",
+    "single-origin pour-overs in Sellwood",
+    "Detroit-style pizza in the Pearl",
+    "weekend brunch in Hawthorne",
+    "a craft beer crawl through Slabtown",
+    "Portland's queer food scene",
+    "winter farmers' market roundup",
 ]
 
-_VERDE_TOPICS: list[str] = [
-    "deforestación en la Amazonía", "los páramos de Santurbán",
-    "minería ilegal en el Chocó", "sequía en La Guajira",
-    "transición energética", "la COP de Medellín",
-    "consulta previa", "biodiversidad en el Pacífico",
-    "contaminación del río Medellín", "proyecto Quebradona",
-    "ríos contaminados de Antioquia", "la crisis del agua en Bogotá",
-]
-
-_SOBREMESA_TOPICS: list[str] = [
-    "Gesha del Huila", "Tabi de Nariño", "Caturra del Tolima",
-    "la bandeja paisa", "el sancocho trifásico",
-    "los festivales de diciembre", "cocina indígena del Cauca",
-    "Bourbon Rosado", "las arepas del Valle de Aburrá",
-    "el aguardiente antioqueño", "la lechona tolimense",
-    "nuevos baristas de Medellín", "mercados campesinos",
-]
-
-_WEEKDAY_ES: dict[int, str] = {
-    0: "lunes", 1: "martes", 2: "miércoles", 3: "jueves",
-    4: "viernes", 5: "sábado", 6: "domingo",
+_WEEKDAY_EN: dict[int, str] = {
+    0: "Monday", 1: "Tuesday", 2: "Wednesday", 3: "Thursday",
+    4: "Friday", 5: "Saturday", 6: "Sunday",
 }
 
 
 def _subscriber_id(idx: int) -> str:
-    h = hashlib.sha256(f"labrujula-subscriber-{idx}".encode()).hexdigest()
+    h = hashlib.sha256(f"cascade-tribune-subscriber-{idx}".encode()).hexdigest()
     return f"sub_{h[:16]}"
 
 
@@ -159,10 +156,8 @@ def _pick_year(rng: random.Random) -> int:
 
 def _pick_subscribed_at(rng: random.Random) -> date:
     year = _pick_year(rng)
-    if year == 2018:
+    if year == 2019:
         day_of_year = rng.randint(14, 364)  # after founding
-    elif year == 2025:
-        day_of_year = rng.randint(0, 364)
     else:
         day_of_year = rng.randint(0, 364)
     d = date(year, 1, 1) + timedelta(days=day_of_year)
@@ -204,8 +199,9 @@ def build_subscribers(rng: random.Random) -> list[dict]:
     for idx in range(config.SUBSCRIBER_COUNT):
         subscribed_at = _pick_subscribed_at(rng)
         country = _weighted_choice(rng, config.SUBSCRIBER_COUNTRY_WEIGHTS)
-        en_share = config.SUBSCRIBER_EN_SHARE_BY_COUNTRY[country]
-        language = "en" if rng.random() < en_share else "es"
+        # Subscriber language: most English, small Spanish share for US subs.
+        es_chance = 0.04 if country == "US" else 0.01
+        language = "es" if rng.random() < es_chance else "en"
         bucket = _weighted_choice(rng, config.ENGAGEMENT_BUCKET_SPLIT)
         opt_ins = _pick_opt_ins(rng)
         last_active = _pick_last_active(rng, subscribed_at, bucket)
@@ -234,39 +230,36 @@ def _iterate_send_dates(newsletter: str):
 
 
 def _subject_line(rng: random.Random, newsletter: str, send_date: date) -> str:
-    if newsletter == "diario":
-        templates, topics = _DIARIO_SUBJECTS, _DIARIO_TOPICS
-    elif newsletter == "verde":
-        templates, topics = _VERDE_SUBJECTS, _VERDE_TOPICS
+    if newsletter == "daily_cascade":
+        templates, topics = _DAILY_CASCADE_SUBJECTS, _DAILY_TOPICS
     else:
-        templates, topics = _SOBREMESA_SUBJECTS, _SOBREMESA_TOPICS
+        templates, topics = _PLATE_PLACE_SUBJECTS, _PLATE_TOPICS
     template = rng.choice(templates)
     return template.format(
         topic=rng.choice(topics),
-        weekday=_WEEKDAY_ES[send_date.weekday()],
+        weekday=_WEEKDAY_EN[send_date.weekday()],
     )
 
 
 def build_sends(rng: random.Random, subscribers: list[dict]) -> list[dict]:
-    """Sorted subscribed-at indices per newsletter, then bisect per send."""
-    opted_dates_by_nl: dict[str, list[date]] = {
+    opted_dates_by_nl: dict[str, list[str]] = {
         nl: [] for nl in config.NEWSLETTER_LIST_SIZES
     }
     for s in subscribers:
-        subscribed_at = date.fromisoformat(s["subscribed_at"])
+        subscribed_at = s["subscribed_at"]
         for nl in json.loads(s["newsletters_opted_in"]):
             opted_dates_by_nl[nl].append(subscribed_at)
     for nl in opted_dates_by_nl:
         opted_dates_by_nl[nl].sort()
 
     sends: list[dict] = []
-    for nl in ["diario", "verde", "sobremesa"]:
+    for nl in ["daily_cascade", "plate_place"]:
         sorted_dates = opted_dates_by_nl[nl]
         lo_open, hi_open = config.OPEN_RATE_RANGES[nl]
         lo_click, hi_click = config.CLICK_RATE_RANGES[nl]
         lo_unsub, hi_unsub = config.UNSUB_RATE_RANGES[nl]
         for send_date in _iterate_send_dates(nl):
-            recipients = bisect.bisect_right(sorted_dates, send_date)
+            recipients = bisect.bisect_right(sorted_dates, send_date.isoformat())
             if recipients == 0:
                 continue
             open_rate = rng.uniform(lo_open, hi_open)
@@ -281,7 +274,7 @@ def build_sends(rng: random.Random, subscribers: list[dict]) -> list[dict]:
                 {
                     "newsletter": nl,
                     "send_date": send_date.isoformat(),
-                    "subject_line_es": _subject_line(rng, nl, send_date),
+                    "subject_line": _subject_line(rng, nl, send_date),
                     "recipients": recipients,
                     "opens": opens,
                     "unique_opens": unique_opens,
@@ -311,9 +304,9 @@ def write_sends(conn: sqlite3.Connection, sends: list[dict]) -> None:
     conn.executescript(SENDS_DDL)
     conn.executemany(
         "INSERT INTO newsletter_sends (send_id, newsletter, send_date, "
-        "subject_line_es, recipients, opens, unique_opens, clicks, "
+        "subject_line, recipients, opens, unique_opens, clicks, "
         "unique_clicks, unsubscribes) VALUES (:send_id, :newsletter, "
-        ":send_date, :subject_line_es, :recipients, :opens, :unique_opens, "
+        ":send_date, :subject_line, :recipients, :opens, :unique_opens, "
         ":clicks, :unique_clicks, :unsubscribes)",
         sends,
     )

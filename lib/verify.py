@@ -32,7 +32,7 @@ def _check_send_eligibility(
     subs = conn.execute(
         "SELECT subscribed_at, newsletters_opted_in FROM newsletter_subscribers"
     ).fetchall()
-    opted_dates: dict[str, list[str]] = {"diario": [], "verde": [], "sobremesa": []}
+    opted_dates: dict[str, list[str]] = {nl: [] for nl in config.NEWSLETTER_LIST_SIZES}
     for sa, opts_json in subs:
         for nl in json.loads(opts_json):
             opted_dates[nl].append(sa)
@@ -69,8 +69,6 @@ def _check_send_rates(
             out.append((f"{nl} open rate range", False, "no sends"))
             continue
         min_r, max_r = min(rates), max(rates)
-        # All individual send rates should sit within the config band
-        # (with small floor/ceiling wiggle from integer rounding).
         ok = min_r >= open_lo - 0.01 and max_r <= open_hi + 0.01
         out.append(
             (
@@ -133,28 +131,42 @@ def _check_sponsor_tag_propagation(
     )
 
 
-def _check_inactive_sponsor_dates(
+def _check_headline_sponsor_minimums(
     conn: sqlite3.Connection, out: list[tuple[str, bool, str]]
 ) -> None:
-    """USAID Colombia and the NED reduced or ended Colombia operations
-    in 2025. They must not appear on campaigns ending after the cutoff."""
-    rules = (
-        ("USAID Colombia",                   "2025-02-01"),
-        ("National Endowment for Democracy", "2025-07-01"),
-    )
-    for sponsor, cutoff in rules:
-        bad = conn.execute(
-            "SELECT COUNT(*) FROM past_campaigns "
-            "WHERE sponsor_name = ? AND end_date >= ?",
-            (sponsor, cutoff),
+    """The four headline sponsors must each have at least N campaigns
+    on record so the brief tool has real history to cite."""
+    for sponsor, (sector, min_n) in config.HEADLINE_SPONSORS.items():
+        actual = conn.execute(
+            "SELECT COUNT(*) FROM past_campaigns WHERE sponsor_name = ?",
+            (sponsor,),
         ).fetchone()[0]
         out.append(
             (
-                f"{sponsor} not on campaigns ending >= {cutoff}",
-                bad == 0,
-                f"{bad} violation(s)",
+                f"{sponsor}: >= {min_n} campaigns",
+                actual >= min_n,
+                f"actual={actual}",
             )
         )
+
+
+def _check_outcome_distribution(
+    conn: sqlite3.Connection, out: list[tuple[str, bool, str]]
+) -> None:
+    """At least 10% of campaigns should land in a non-completed outcome
+    so the brief tool sees honest history, not success-theatre."""
+    total = conn.execute("SELECT COUNT(*) FROM past_campaigns").fetchone()[0]
+    non_completed = conn.execute(
+        "SELECT COUNT(*) FROM past_campaigns WHERE outcome_status != 'completed'"
+    ).fetchone()[0]
+    pct = (non_completed / total) if total else 0
+    out.append(
+        (
+            "non-completed outcomes share >= 10%",
+            pct >= 0.10,
+            f"{non_completed}/{total} = {pct*100:.1f}%",
+        )
+    )
 
 
 def _check_fk_integrity(
@@ -185,18 +197,19 @@ def run(conn: sqlite3.Connection) -> None:
     results: list[tuple[str, bool, str]] = []
 
     _count_check(conn, "authors", 22, 22, results)
-    _count_check(conn, "articles", 4_400, 5_200, results)
-    _count_check(conn, "pageviews_daily", 120_000, 160_000, results)
-    _count_check(conn, "audience_daily", 80_000, 140_000, results)
+    _count_check(conn, "articles", 4_800, 6_500, results)
+    _count_check(conn, "pageviews_daily", 130_000, 230_000, results)
+    _count_check(conn, "audience_daily", 80_000, 160_000, results)
     _count_check(conn, "newsletter_subscribers", 44_500, 45_500, results)
-    _count_check(conn, "newsletter_sends", 700, 760, results)
+    _count_check(conn, "newsletter_sends", 580, 640, results)
     _count_check(conn, "past_campaigns", 68, 76, results)
-    _count_check(conn, "campaign_articles", 120, 320, results)
+    _count_check(conn, "campaign_articles", 80, 360, results)
 
     _check_pv_sess_ratio(conn, results)
     _check_bridge_windows(conn, results)
     _check_sponsor_tag_propagation(conn, results)
-    _check_inactive_sponsor_dates(conn, results)
+    _check_headline_sponsor_minimums(conn, results)
+    _check_outcome_distribution(conn, results)
     _check_fk_integrity(conn, results)
     _check_send_eligibility(conn, results)
     _check_send_rates(conn, results)
@@ -206,7 +219,7 @@ def run(conn: sqlite3.Connection) -> None:
     print("\n=== Verification ===")
     for name, ok, detail in results:
         mark = "OK  " if ok else "FAIL"
-        print(f"  [{mark}] {name:58}  {detail}")
+        print(f"  [{mark}] {name:64}  {detail}")
 
     if failed:
         print(f"\n{len(failed)} check(s) FAILED. Aborting.")

@@ -1,20 +1,22 @@
 """Past sponsorship campaigns + campaign↔article bridge + pricing doc.
 
-Four generators, wired together:
-1. `build_campaigns` draws ~72 campaigns across 2022-2025 with
-   format/sector/fee/duration/impression distributions.
-2. `build_campaign_articles` links each applicable campaign to the
-   articles La Brújula actually ran under it — constrained by the
-   campaign's date window and sector-preferred sections.
-3. Articles receive a `sponsor_tag` update so the articles table is
-   self-linking to the sponsor name.
+Generators wired together:
+1. `build_campaigns` reserves a minimum number of slots for each
+   headline sponsor (Portland General Energy, Powell's Community Foundation,
+   Cascadia Credit Union, Stumptown Roasters Co-op), then fills the rest
+   with random draws across 12 sectors weighted to a US local-news pipeline.
+2. `build_campaign_articles_and_summaries` links applicable campaigns to
+   the articles that ran under them and writes an outcome-aware
+   English summary per campaign.
+3. Articles receive a `sponsor_tag` update so the articles table
+   self-links to the sponsor name.
 4. `write_pricing_reference` emits `data/pricing_reference.md` — a
-   static rate-card doc for the downstream brief tool to anchor to.
+   static USD rate-card doc anchored to the new outlet.
 
-The four folder sponsors (Bancolombia Verde, Fundación Andes, MoviMed,
-Grupo Éxito Café) are *not* in past_campaigns: they're the prospective
-clients the brief tool will be pitching. The campaigns here are a
-different cast of named companies that serves as precedent analogues.
+Outcome modeling: 22% of campaigns land in a non-completed outcome
+state (`underdelivered`, `did_not_renew`, `ended_early`) per the
+CAMPAIGN_OUTCOME_WEIGHTS distribution. Summaries reflect the outcome
+honestly so the brief tool can show real history, not success-theatre.
 """
 from __future__ import annotations
 
@@ -33,13 +35,16 @@ CREATE TABLE past_campaigns (
     start_date               TEXT NOT NULL,
     end_date                 TEXT NOT NULL,
     format                   TEXT NOT NULL,
-    fee_eur                  INTEGER NOT NULL,
+    fee_usd                  INTEGER NOT NULL,
     impressions_delivered    INTEGER NOT NULL,
     engagement_rate          REAL NOT NULL,
-    post_campaign_summary_es TEXT NOT NULL
+    outcome_status           TEXT NOT NULL,
+    post_campaign_summary    TEXT NOT NULL
 );
 CREATE INDEX idx_camp_sector ON past_campaigns(sponsor_sector);
 CREATE INDEX idx_camp_format ON past_campaigns(format);
+CREATE INDEX idx_camp_sponsor ON past_campaigns(sponsor_name);
+CREATE INDEX idx_camp_outcome ON past_campaigns(outcome_status);
 
 CREATE TABLE campaign_articles (
     campaign_id INTEGER NOT NULL REFERENCES past_campaigns(campaign_id),
@@ -49,115 +54,207 @@ CREATE TABLE campaign_articles (
 CREATE INDEX idx_ca_article ON campaign_articles(article_id);
 """
 
-# Sponsor name pools per sector. Real Colombian/international names are
-# used here because the campaigns are *fictional* events — the names
-# provide realism without claiming any real company actually ran these.
-# The four folder sponsors are deliberately excluded; they're the
-# prospective clients for the downstream brief tool.
+# Fictional sponsor pools per sector. The four headline sponsors
+# (PGE, Powell's CF, Cascadia CU, Stumptown) are included in their
+# sector pools — they get random draws on top of their reserved
+# minimums. All names are fictional analogues; profile.md files in
+# /sponsors include the disclaimer.
 _SPONSORS_BY_SECTOR: dict[str, list[str]] = {
-    "financial_services": [
-        "Bancolombia", "Grupo Sura", "Davivienda", "BBVA Colombia",
-        "Banco de Bogotá", "Banco Popular", "Itaú Colombia",
-        "Banco Caja Social", "AV Villas",
+    "regional_food_beverage": [
+        "Stumptown Roasters Co-op",
+        "Cascade Market Co-op",
+        "Willamette Brewers Co-op",
+        "Salt & Cedar Collective",
+        "Pacific Pinot Collective",
+        "Bull Run Cider",
+        "Bonny Slope Bakehouse",
+        "Tualatin Valley Wines",
     ],
-    "ngo_foundation": [
-        "Fundación Corona", "Fundación Santo Domingo",
-        "Fundación Bolívar Davivienda", "Fundación Aurelio Llano Posada",
-        "Open Society Foundations", "Ford Foundation",
-        "Fundación Carvajal", "National Endowment for Democracy",
-        "Fundación WWB Colombia", "Inter-American Foundation",
-        "Fundación Avina", "Konrad Adenauer Stiftung Colombia",
-        "Friedrich Ebert Stiftung Colombia",
+    "regional_finance": [
+        "Cascadia Credit Union",
+        "Onpoint Cooperative",
+        "Willamette Mutual Bank",
+        "Albina Trust Mutual",
+        "First Tech Federal Mutual",
+        "Columbia Pacific Bank",
     ],
-    "consumer_brands": [
-        "Nutresa", "Alpina", "Postobón", "Colombina",
-        "Crepes & Waffles", "Juan Valdez Café", "Avianca",
-        "Totto", "Claro Móvil",
+    "regional_healthcare": [
+        "Pacific Northwest Health",
+        "Providence Cascadia Health",
+        "Kaiser Cascade Network",
+        "Legacy West Health",
+        "Adventist Cascade Medical",
     ],
-    "health": [
-        "Compensar", "Colsubsidio", "EPS Sura", "EPS Sanitas",
-        "Clínica Las Américas", "Hospital Pablo Tobón Uribe",
-        "Cafesalud", "Coomeva",
+    "regional_culture_arts": [
+        "Portland Museum of Art",
+        "Cascade Center Stage",
+        "Cascade Symphony",
+        "Literary Arts Cascade",
+        "Northwest Film Center",
+        "Japanese Garden of Portland",
     ],
-    "tech": [
-        "Rappi", "Platzi", "Lulo Bank", "Bold", "Habi",
-        "Tpaga", "Tul", "Mercado Libre Colombia", "Habi Colombia",
-        "Nu Bank Colombia",
+    "regional_education": [
+        "Portland State Foundation",
+        "Reed College Press",
+        "Lewis & Clark Foundation",
+        "University of Portland Foundation",
+        "OHSU Cascade Foundation",
     ],
-    "government_eu": [
-        "Unión Europea en Colombia", "Embajada de Suecia",
-        "Embajada de Francia", "Ministerio de Ambiente",
-        "Alcaldía de Medellín", "Gobernación de Antioquia",
-        "USAID Colombia", "Programa de las Naciones Unidas para el Desarrollo",
-        "Cancillería de Colombia", "GIZ Colombia",
+    "regional_business_services": [
+        "Cascadia Realty Group",
+        "Pacific Tower Development",
+        "Stoel Rivers Law",
+        "Holland & Knight Cascade",
+        "Schwabe Williams",
+    ],
+    "regional_utility": [
+        "Portland General Energy",
+        "NW Natural Gas",
+        "Northwest Natural Energy",
+        "Bonneville Pacific Power",
+    ],
+    "national_outdoor_lifestyle": [
+        "Cascadia Outfitters Co-op",
+        "Patagonia Pacific Northwest",
+        "Columbia Mountain Apparel",
+        "Filson Northwest",
+        "Black Diamond Cascade",
+        "KEEN Pacific",
+    ],
+    "national_consumer": [
+        "Subaru Pacific",
+        "Toyota Northwest",
+        "Whole Earth Foods",
+        "Allbirds Pacific",
+        "Seventh Generation Pacific",
+        "Charles Schwab Pacific",
+        "US Bank Pacific Northwest",
+    ],
+    "pnw_community_foundation": [
+        "Powell's Community Foundation",
+        "Meyer Northwest Trust",
+        "Oregon Community Foundation Cascade",
+        "Collins Family Foundation",
+        "Spirit Mountain Cascade Fund",
+        "Pacific Northwest Foundation",
+    ],
+    "national_journalism_funder": [
+        "Knight Pacific Initiative",
+        "Lenfest Foundation Cascade",
+        "Lever Cascade",
+        "NewsMatch Cascade",
+        "Local Media Association",
+    ],
+    "state_local_govt": [
+        "City of Portland Office of Sustainability",
+        "Oregon Department of Transportation",
+        "Multnomah County Library",
+        "Travel Oregon",
+        "Oregon Health Authority",
     ],
 }
-
-# Sponsors that ceased or substantially curtailed Colombia operations
-# during 2025. Allowed only for campaigns whose end_date is strictly
-# before the cutoff. Anything past the cutoff falls through to the
-# regular sector pool.
-#
-# - USAID Colombia: dismantled in early 2025; functions absorbed by
-#   the State Department. No new commitments after Jan 2025.
-# - National Endowment for Democracy: major funding cuts in 2025
-#   forced a sharp reduction in program activity from mid-year.
-_SPONSOR_END_DATE_CUTOFF: dict[str, str] = {
-    "USAID Colombia": "2025-02-01",
-    "National Endowment for Democracy": "2025-07-01",
-}
-
-
-def _eligible_sponsors(sector: str, end_date: str) -> list[str]:
-    pool = list(_SPONSORS_BY_SECTOR[sector])
-    return [
-        s for s in pool
-        if s not in _SPONSOR_END_DATE_CUTOFF
-        or end_date < _SPONSOR_END_DATE_CUTOFF[s]
-    ]
 
 # Sector ↔ preferred article sections for bridge linking.
 _SECTOR_PREFERRED_SECTIONS: dict[str, list[str]] = {
-    "financial_services": ["ciudades", "politica", "actualidad", "cafe_y_comida"],
-    "ngo_foundation":     ["investigacion", "politica", "clima", "actualidad"],
-    "consumer_brands":    ["cultura", "cafe_y_comida", "ciudades"],
-    "health":             ["actualidad", "ciudades", "politica"],
-    "tech":               ["ciudades", "actualidad", "politica"],
-    "government_eu":      ["politica", "clima", "investigacion", "actualidad"],
+    "regional_food_beverage":     ["food_drink", "culture", "business"],
+    "regional_finance":           ["business", "housing", "city_hall"],
+    "regional_healthcare":        ["city_hall", "housing", "business"],
+    "regional_culture_arts":      ["culture", "food_drink"],
+    "regional_education":         ["city_hall", "culture", "business"],
+    "regional_business_services": ["business", "housing", "transportation"],
+    "regional_utility":           ["climate", "city_hall", "business"],
+    "national_outdoor_lifestyle": ["climate", "culture", "transportation"],
+    "national_consumer":          ["business", "culture", "food_drink"],
+    "pnw_community_foundation":   ["culture", "city_hall", "housing"],
+    "national_journalism_funder": ["city_hall", "housing", "climate"],
+    "state_local_govt":           ["city_hall", "transportation", "climate"],
 }
 
 # Topic-phrase pool per sector — threaded into the post-campaign summary.
 _SECTOR_TOPICS: dict[str, list[str]] = {
-    "financial_services": [
-        "inclusión financiera rural", "educación financiera",
-        "microcrédito para pymes", "banca sostenible",
-        "hipotecas verdes", "movilidad eléctrica",
+    "regional_food_beverage": [
+        "Portland's specialty-coffee scene",
+        "the cooperative-bakery renaissance",
+        "small-format breweries in Slabtown",
+        "Oregon pinot country",
+        "the Friday-night neighborhood guide",
     ],
-    "ngo_foundation": [
-        "violencia basada en género", "periodismo local",
-        "democracia participativa", "acuerdo de paz",
-        "derechos humanos", "liderazgos juveniles",
-        "reporteo investigativo",
+    "regional_finance": [
+        "first-time homebuyer programs",
+        "financial literacy for renters",
+        "small-business banking after the SBA shift",
+        "credit-union savings products",
+        "sustainable lending in Oregon",
     ],
-    "consumer_brands": [
-        "café de origen colombiano", "gastronomía regional",
-        "turismo responsable", "marca país",
-        "emprendimiento cultural", "economía creativa",
+    "regional_healthcare": [
+        "behavioral-health access in East Portland",
+        "maternal-health outcomes in the Tri-County",
+        "rural medicine in the Willamette Valley",
+        "vaccine equity programs",
+        "pediatric urgent care",
     ],
-    "health": [
-        "salud rural", "salud mental", "atención primaria",
-        "maternidad adolescente", "vacunación",
-        "enfermedades crónicas no transmisibles",
+    "regional_culture_arts": [
+        "K-12 arts education funding",
+        "the independent literary scene",
+        "performing arts post-pandemic recovery",
+        "regional artist residencies",
+        "Title I free-day programs",
     ],
-    "tech": [
-        "innovación digital", "ecosistema de startups",
-        "educación digital", "inclusión tecnológica",
-        "economía digital", "fintech en Colombia",
+    "regional_education": [
+        "civic education in PPS",
+        "first-gen college pathways",
+        "community-college transfer rates",
+        "research at Portland State",
+        "K-16 mathematics initiatives",
     ],
-    "government_eu": [
-        "cooperación internacional", "reforma rural integral",
-        "transición energética justa", "postconflicto",
-        "equidad de género", "protección de líderes sociales",
+    "regional_business_services": [
+        "zoning reform",
+        "transit-oriented development",
+        "the downtown vacancy puzzle",
+        "co-op ownership models",
+        "the Pearl District after the office downturn",
+    ],
+    "regional_utility": [
+        "the Climate Protection Program rollout",
+        "summer grid reliability",
+        "EV adoption curves",
+        "gas-to-electric residential conversion",
+        "wildfire season mitigation",
+    ],
+    "national_outdoor_lifestyle": [
+        "public-lands access",
+        "outdoor-recreation equity",
+        "sustainable apparel sourcing",
+        "Cascade and Coast Range trail networks",
+        "Oregon's adaptive recreation movement",
+    ],
+    "national_consumer": [
+        "regional manufacturing",
+        "B-corp profiles",
+        "climate-conscious consumption",
+        "EV market expansion",
+        "small-batch brand growth",
+    ],
+    "pnw_community_foundation": [
+        "Black-led nonprofits in Portland",
+        "civic-infrastructure resilience",
+        "journalism sustainability",
+        "Indigenous-led environmental programs",
+        "community-driven climate adaptation",
+    ],
+    "national_journalism_funder": [
+        "investigative journalism on housing",
+        "local news experiments",
+        "cross-border reporting on climate",
+        "civic-information ecosystems",
+        "newsroom sustainability",
+    ],
+    "state_local_govt": [
+        "the Climate Protection Program rollout",
+        "Vision Zero implementation",
+        "the public-records modernization push",
+        "Travel Oregon's regional partnerships",
+        "Oregon Health Authority's behavioral-health build-out",
     ],
 }
 
@@ -167,14 +264,16 @@ _FORMAT_DURATION_WEEKS: dict[str, tuple[int, int]] = {
     "longform_series":     (8, 24),
     "event_partnership":   (1, 4),
     "podcast_sponsorship": (4, 8),
+    "underwriting":        (26, 52),  # 6-12 months
 }
 
 _FORMAT_IMPRESSIONS_RANGE: dict[str, tuple[int, int]] = {
     "sponsored_section":   (180_000, 1_100_000),
-    "branded_newsletter":  (16_000,     55_000),
+    "branded_newsletter":  ( 28_000,    140_000),
     "longform_series":     (320_000, 2_000_000),
-    "event_partnership":   (22_000,     90_000),
-    "podcast_sponsorship": (35_000,    210_000),
+    "event_partnership":   ( 22_000,     90_000),
+    "podcast_sponsorship": ( 35_000,    210_000),
+    "underwriting":        (800_000,  4_500_000),  # year-long high-frequency
 }
 
 _FORMAT_ENGAGEMENT_RANGE: dict[str, tuple[float, float]] = {
@@ -183,6 +282,7 @@ _FORMAT_ENGAGEMENT_RANGE: dict[str, tuple[float, float]] = {
     "longform_series":     (0.050, 0.150),
     "event_partnership":   (0.150, 0.350),
     "podcast_sponsorship": (0.060, 0.180),
+    "underwriting":        (0.012, 0.040),  # low engagement, broad reach
 }
 
 
@@ -214,100 +314,151 @@ def _fee(rng: random.Random, fmt: str, weeks: int) -> int:
     return max(lo, min(hi, int(fee / 100) * 100))
 
 
-def build_campaigns(rng: random.Random) -> list[dict]:
-    campaigns: list[dict] = []
-    for campaign_id in range(1, config.CAMPAIGN_COUNT + 1):
-        sector = _weighted_choice(rng, config.CAMPAIGN_SECTOR_WEIGHTS)
-        fmt = _weighted_choice(rng, config.CAMPAIGN_FORMAT_WEIGHTS)
-        start = _pick_start_date(rng)
-        dur_lo, dur_hi = _FORMAT_DURATION_WEEKS[fmt]
-        weeks = rng.randint(dur_lo, dur_hi)
-        end = start + timedelta(weeks=weeks)
-        if end > config.CAMPAIGNS_END:
-            end = config.CAMPAIGNS_END
-            weeks = max(1, (end - start).days // 7)
-        # Pick sponsor *after* end_date is known so the eligibility
-        # filter can drop sponsors whose Colombia operations had wound
-        # down by the campaign's end.
-        sponsor = rng.choice(_eligible_sponsors(sector, end.isoformat()))
-        imp_lo, imp_hi = _FORMAT_IMPRESSIONS_RANGE[fmt]
-        impressions = rng.randint(imp_lo, imp_hi)
-        eng_lo, eng_hi = _FORMAT_ENGAGEMENT_RANGE[fmt]
-        engagement = round(rng.uniform(eng_lo, eng_hi), 4)
-        campaigns.append(
-            {
-                "campaign_id": campaign_id,
-                "sponsor_name": sponsor,
-                "sponsor_sector": sector,
-                "start_date": start.isoformat(),
-                "end_date": end.isoformat(),
-                "format": fmt,
-                "fee_eur": _fee(rng, fmt, weeks),
-                "impressions_delivered": impressions,
-                "engagement_rate": engagement,
-                "weeks": weeks,  # scratch, not persisted
-            }
+def _build_one_campaign(
+    rng: random.Random, sector: str, sponsor: str | None = None
+) -> dict:
+    """Build a single campaign dict (without campaign_id, summary, outcome_status —
+    those are set later)."""
+    fmt = _weighted_choice(rng, config.CAMPAIGN_FORMAT_WEIGHTS)
+    start = _pick_start_date(rng)
+    dur_lo, dur_hi = _FORMAT_DURATION_WEEKS[fmt]
+    weeks = rng.randint(dur_lo, dur_hi)
+    end = start + timedelta(weeks=weeks)
+    if end > config.CAMPAIGNS_END:
+        end = config.CAMPAIGNS_END
+        weeks = max(1, (end - start).days // 7)
+    if sponsor is None:
+        sponsor = rng.choice(_SPONSORS_BY_SECTOR[sector])
+    imp_lo, imp_hi = _FORMAT_IMPRESSIONS_RANGE[fmt]
+    impressions = rng.randint(imp_lo, imp_hi)
+    eng_lo, eng_hi = _FORMAT_ENGAGEMENT_RANGE[fmt]
+    engagement = round(rng.uniform(eng_lo, eng_hi), 4)
+    return {
+        "sponsor_name": sponsor,
+        "sponsor_sector": sector,
+        "start_date": start.isoformat(),
+        "end_date": end.isoformat(),
+        "format": fmt,
+        "fee_usd": _fee(rng, fmt, weeks),
+        "impressions_delivered": impressions,
+        "engagement_rate": engagement,
+        "weeks": weeks,
+    }
+
+
+def _apply_outcome(rng: random.Random, c: dict) -> None:
+    """Set outcome_status and adjust impressions/engagement/end_date in
+    place to reflect honest history. Mutates c."""
+    outcome = _weighted_choice(rng, config.CAMPAIGN_OUTCOME_WEIGHTS)
+    c["outcome_status"] = outcome
+
+    if outcome == "underdelivered":
+        # Delivered fewer impressions, engagement at the low end of the band.
+        c["impressions_delivered"] = int(c["impressions_delivered"] * rng.uniform(0.55, 0.78))
+        eng_lo, _ = _FORMAT_ENGAGEMENT_RANGE[c["format"]]
+        c["engagement_rate"] = round(eng_lo * rng.uniform(0.85, 1.05), 4)
+    elif outcome == "ended_early":
+        # Cut short — recompute end_date and scale impressions down.
+        actual_weeks = max(1, int(c["weeks"] * rng.uniform(0.30, 0.60)))
+        new_end = date.fromisoformat(c["start_date"]) + timedelta(weeks=actual_weeks)
+        c["end_date"] = new_end.isoformat()
+        c["impressions_delivered"] = int(
+            c["impressions_delivered"] * actual_weeks / max(1, c["weeks"])
         )
+        c["weeks"] = actual_weeks
+    # `did_not_renew` and `completed` keep numbers as drawn.
+
+
+def build_campaigns(rng: random.Random) -> list[dict]:
+    """72 campaigns with the four headline sponsors guaranteed minimum
+    representation, then random fills."""
+    campaigns: list[dict] = []
+
+    # Reserved slots for each headline sponsor.
+    for sponsor, (sector, min_n) in config.HEADLINE_SPONSORS.items():
+        for _ in range(min_n):
+            campaigns.append(_build_one_campaign(rng, sector, sponsor=sponsor))
+
+    # Random fill for the rest.
+    reserved = sum(n for _, n in config.HEADLINE_SPONSORS.values())
+    for _ in range(config.CAMPAIGN_COUNT - reserved):
+        sector = _weighted_choice(rng, config.CAMPAIGN_SECTOR_WEIGHTS)
+        campaigns.append(_build_one_campaign(rng, sector))
+
+    # Apply outcome status (mutates in place).
+    for c in campaigns:
+        _apply_outcome(rng, c)
+
     campaigns.sort(key=lambda c: c["start_date"])
     for i, c in enumerate(campaigns, 1):
         c["campaign_id"] = i
     return campaigns
 
 
-def _es_num(n: int) -> str:
-    """Format a number Spanish-style: 1.234.567 (thousand separators = '.')."""
-    return f"{n:,}".replace(",", ".")
+# ---- summaries --------------------------------------------------------------
+
+def _us_num(n: int) -> str:
+    return f"{n:,}"  # US-style: 1,234,567
 
 
 def _summary_sponsored_section(rng, c, topic, n_pieces):
     return (
-        f"Durante {c['weeks']} semanas, La Brújula produjo junto con "
-        f"{c['sponsor_name']} una sección patrocinada sobre {topic} que "
-        f"publicó {n_pieces} artículos originales. La sección acumuló "
-        f"{_es_num(c['impressions_delivered'])} impresiones y una tasa de "
-        f"engagement del {c['engagement_rate']*100:.1f}%."
+        f"Across {c['weeks']} weeks, The Cascade Tribune produced a "
+        f"sponsored section with {c['sponsor_name']} on {topic}, publishing "
+        f"{n_pieces} original articles. The series accumulated "
+        f"{_us_num(c['impressions_delivered'])} impressions with a "
+        f"{c['engagement_rate']*100:.1f}% engagement rate."
     )
 
 
 def _summary_longform(rng, c, topic, n_pieces):
     return (
-        f"Una serie de reporteo en {n_pieces} entregas sobre {topic}, "
-        f"cofinanciada por {c['sponsor_name']}, exploró el tema desde "
-        f"ángulos regionales y nacionales a lo largo de {c['weeks']} "
-        f"semanas. La serie sumó {_es_num(c['impressions_delivered'])} "
-        f"lecturas con engagement del {c['engagement_rate']*100:.1f}%."
+        f"A {n_pieces}-part longform series on {topic}, co-funded by "
+        f"{c['sponsor_name']}, ran across {c['weeks']} weeks. The series "
+        f"reached {_us_num(c['impressions_delivered'])} readers with a "
+        f"{c['engagement_rate']*100:.1f}% engagement rate."
     )
 
 
 def _summary_branded_newsletter(rng, c, topic, n_pieces):
-    nl = rng.choice(["Diario", "Verde", "Sobremesa"])
+    nl = rng.choice(["The Daily Cascade", "Plate & Place"])
     return (
-        f"Una edición especial del newsletter {nl} dedicada a {topic}, "
-        f"patrocinada por {c['sponsor_name']}, alcanzó "
-        f"{_es_num(c['impressions_delivered'])} suscriptores con una tasa de "
-        f"apertura del {c['engagement_rate']*100:.1f}%."
+        f"A sponsored edition of {nl} dedicated to {topic}, underwritten by "
+        f"{c['sponsor_name']}, reached {_us_num(c['impressions_delivered'])} "
+        f"subscribers with a {c['engagement_rate']*100:.1f}% open rate."
     )
 
 
 def _summary_event(rng, c, topic, n_pieces):
-    city = rng.choice(["Medellín", "Bogotá", "Cali", "Cartagena"])
+    venue = rng.choice([
+        "the Alberta Rose Theatre", "Revolution Hall", "Holocene",
+        "the Old Church Concert Hall", "the Portland Art Museum auditorium",
+    ])
     return (
-        f"{c['sponsor_name']} copatrocinó el panel de La Brújula sobre "
-        f"{topic} realizado en {city}, con asistencia presencial y "
-        f"transmisión online que sumaron {_es_num(c['impressions_delivered'])} "
-        f"impresiones. La interacción medida fue del "
-        f"{c['engagement_rate']*100:.1f}%."
+        f"{c['sponsor_name']} co-presented The Cascade Tribune's panel "
+        f"on {topic} at {venue}, with in-room and livestreamed reach "
+        f"of {_us_num(c['impressions_delivered'])}. Measured engagement "
+        f"was {c['engagement_rate']*100:.1f}%."
     )
 
 
 def _summary_podcast(rng, c, topic, n_pieces):
     eps = max(4, c["weeks"])
     return (
-        f"Patrocinio de {c['weeks']} semanas ({eps} episodios) del "
-        f"podcast semanal de La Brújula con {c['sponsor_name']}, "
-        f"centrado en {topic}. Los episodios acumularon "
-        f"{_es_num(c['impressions_delivered'])} escuchas con tasa de clic del "
-        f"{c['engagement_rate']*100:.1f}%."
+        f"A {c['weeks']}-week podcast sponsorship ({eps} episodes) with "
+        f"{c['sponsor_name']}, focused on {topic}. Episodes accumulated "
+        f"{_us_num(c['impressions_delivered'])} listens with a "
+        f"{c['engagement_rate']*100:.1f}% click-through rate on host-read placements."
+    )
+
+
+def _summary_underwriting(rng, c, topic, n_pieces):
+    return (
+        f"A {c['weeks']}-week underwriting partnership with {c['sponsor_name']}, "
+        f"providing low-frequency sponsor recognition across The Cascade "
+        f"Tribune's flagship pages, daily newsletter, and event programming. "
+        f"Total estimated impression reach: {_us_num(c['impressions_delivered'])}; "
+        f"average click-through {c['engagement_rate']*100:.1f}%."
     )
 
 
@@ -317,50 +468,135 @@ _SUMMARY_BUILDERS = {
     "branded_newsletter":  _summary_branded_newsletter,
     "event_partnership":   _summary_event,
     "podcast_sponsorship": _summary_podcast,
+    "underwriting":        _summary_underwriting,
 }
 
 
-def _outcome_and_followup(rng, c, n_pieces):
+def _outcome_clause(rng: random.Random, c: dict, n_pieces: int) -> str:
     sector = c["sponsor_sector"]
-    outcomes = {
-        "financial_services": [
-            f"El sponsor reportó un aumento del {rng.randint(6, 18)}% en búsquedas de marca durante el periodo.",
-            f"La serie generó {_es_num(rng.randint(280, 1200))} clics hacia la microsite del sponsor.",
-            "Se produjo un informe final distribuido a la red de corresponsales del sponsor.",
+    outcome = c["outcome_status"]
+
+    if outcome == "completed":
+        return _completed_outcome(rng, c, sector)
+    if outcome == "underdelivered":
+        return _underdelivered_outcome(rng, c)
+    if outcome == "ended_early":
+        return _ended_early_outcome(rng, c)
+    if outcome == "did_not_renew":
+        return _did_not_renew_outcome(rng, c)
+    return ""
+
+
+def _completed_outcome(rng: random.Random, c: dict, sector: str) -> str:
+    pool = {
+        "regional_food_beverage": [
+            f"{c['sponsor_name']} reported a {rng.randint(8, 22)}% lift in foot-traffic "
+            f"to participating locations during the campaign window.",
+            f"The series drove {_us_num(rng.randint(280, 1400))} clicks to the sponsor's storefront finder.",
+            "Three pieces from the series were syndicated by Eater Portland and PDX Monthly.",
         ],
-        "ngo_foundation": [
-            f"La campaña motivó una audiencia pública en el Congreso de la República.",
-            f"Los resultados alimentaron el informe anual del {c['sponsor_name']}.",
-            f"Tres de las piezas fueron replicadas por aliados del sponsor en el territorio.",
+        "regional_finance": [
+            f"{c['sponsor_name']} reported {_us_num(rng.randint(180, 900))} new "
+            "membership applications attributable to the series.",
+            "The campaign supported the sponsor's first-time homebuyer outreach in East Portland.",
+            "The sponsor cited the series in its 2025 community reinvestment filing.",
         ],
-        "consumer_brands": [
-            f"La marca reportó un aumento del {rng.randint(8, 22)}% en afinidad medida por encuestas internas.",
-            f"Las piezas vincularon tráfico directo a los puntos de venta destacados.",
-            f"La colaboración derivó en una segunda temporada acordada el trimestre siguiente.",
+        "regional_healthcare": [
+            f"The campaign supported the sponsor's outreach to {_us_num(rng.randint(2_000, 9_000))} "
+            "previously unenrolled patients.",
+            "The series was distributed across the sponsor's network of community partners.",
+            "Outcomes data from the series fed into the sponsor's annual community health needs assessment.",
         ],
-        "health": [
-            f"La cobertura contribuyó a {rng.randint(2, 6)} mesas técnicas entre secretarías de salud y operadores.",
-            f"Los datos del informe fueron citados por la Defensoría del Pueblo en su reporte semestral.",
-            f"El sponsor distribuyó las piezas a su red asistencial.",
+        "regional_culture_arts": [
+            f"The series drove {_us_num(rng.randint(400, 1_800))} ticket inquiries during its run.",
+            "Two pieces won regional arts journalism awards and were reprinted by the sponsor.",
+            "The campaign accompanied the launch of the sponsor's expanded K-12 programming.",
         ],
-        "tech": [
-            f"El sponsor reportó {_es_num(rng.randint(150, 900))} descargas directamente atribuibles a la serie.",
-            f"La campaña impulsó dos paneles adicionales en festivales tech del semestre.",
-            f"Se registraron {_es_num(rng.randint(20, 120))} leads calificados para el equipo comercial del sponsor.",
+        "regional_education": [
+            f"{c['sponsor_name']} reported {_us_num(rng.randint(120, 600))} prospective-student "
+            "inquiries tied to the campaign window.",
+            "The series was incorporated into freshman seminar materials at the sponsor institution.",
+            "Coverage informed the sponsor's regional outreach strategy for fall 2026.",
         ],
-        "government_eu": [
-            f"El material fue incorporado al repositorio público de la delegación.",
-            f"La serie fue presentada en un evento en Bruselas con representantes de la región.",
-            f"Los hallazgos alimentaron la agenda de cooperación del siguiente ciclo.",
+        "regional_business_services": [
+            f"The sponsor reported {_us_num(rng.randint(40, 200))} "
+            "qualified leads attributable to the campaign.",
+            "The series accompanied the sponsor's office expansion into Beaverton.",
+            "Two pieces were repurposed for the sponsor's industry-association presentations.",
+        ],
+        "regional_utility": [
+            "The sponsor cited the series in its rate-case filing as evidence of customer education investment.",
+            f"{_us_num(rng.randint(800, 3_500))} customers signed up for the sponsor's "
+            "energy-efficiency rebate program during the campaign.",
+            "Coverage was distributed to the sponsor's residential customer base via bill insert.",
+        ],
+        "national_outdoor_lifestyle": [
+            f"The sponsor reported {_us_num(rng.randint(2_000, 12_000))} engagements "
+            "with their PNW campaign hub during the run.",
+            "Two pieces were syndicated by REI Outdoor Journal and Outside.",
+            "The campaign supported the sponsor's launch of its Cascade-region storytelling hub.",
+        ],
+        "national_consumer": [
+            f"The sponsor reported a {rng.randint(6, 16)}% lift in PNW brand affinity scores.",
+            f"The series generated {_us_num(rng.randint(800, 4_500))} qualified leads.",
+            "Coverage accompanied the sponsor's regional product launch.",
+        ],
+        "pnw_community_foundation": [
+            "The series was incorporated into the foundation's annual report.",
+            "Two pieces were cited by Multnomah County in subsequent budget testimony.",
+            "The campaign supported the launch of the foundation's regional grantee portfolio.",
+        ],
+        "national_journalism_funder": [
+            "Three pieces were re-published in the funder's national best-of digest.",
+            "The campaign satisfied the funder's matching-gift program requirements.",
+            "Coverage was used in the funder's annual conference proceedings.",
+        ],
+        "state_local_govt": [
+            "The campaign satisfied the agency's public-information mandate for the program.",
+            f"Coverage reached approximately {_us_num(rng.randint(15_000, 80_000))} "
+            "Oregon households through cross-channel distribution.",
+            "The series informed an expanded second-year budget request.",
         ],
     }
-    followups = [
-        f"La colaboración con {c['sponsor_name']} continúa en conversaciones para un posible formato de podcast.",
-        f"El equipo comercial reporta satisfacción con entregables y resultados.",
-        f"La relación sentó base para una renovación anual del acuerdo marco.",
-        "El informe interno del sponsor cita esta pieza como caso de referencia.",
-    ]
-    return rng.choice(outcomes[sector]) + " " + rng.choice(followups)
+    return rng.choice(pool[sector])
+
+
+def _underdelivered_outcome(rng: random.Random, c: dict) -> str:
+    return rng.choice([
+        "Delivered impressions came in below the contracted target; the sponsor and editorial "
+        "agreed on a partial credit toward a future activation.",
+        "Engagement landed at the bottom of the format's typical band, attributed to a mid-run "
+        "competing news cycle. The sponsor accepted the result and elected not to renew at the "
+        "same volume.",
+        "The campaign delivered against its impression target but engagement fell short. Post-mortem "
+        "identified topic-fit drift between the original brief and what editorial actually produced.",
+        "Performance fell short of projections; both parties signed off on a make-good event in Q1 of the following year.",
+    ])
+
+
+def _ended_early_outcome(rng: random.Random, c: dict) -> str:
+    return rng.choice([
+        f"The sponsor pulled the campaign in week {max(2, c['weeks'])} citing internal budget revisions; "
+        "remaining commitments were settled at pro-rated terms.",
+        "The campaign ended ahead of schedule by mutual agreement after a topical conflict surfaced "
+        "with editorial coverage outside the sponsored series.",
+        f"The sponsor concluded the campaign early after a strategic priority shift. "
+        f"Pro-rated impressions were credited.",
+        "Editorial flagged a conflict-of-interest concern partway through the run; both parties "
+        "concluded the campaign at the natural break point.",
+    ])
+
+
+def _did_not_renew_outcome(rng: random.Random, c: dict) -> str:
+    return rng.choice([
+        "The campaign delivered against its targets, but the sponsor opted not to renew, citing "
+        "a planned shift to a different audience strategy.",
+        "Strong delivery, no renewal — the sponsor moved its 2026 budget to a national platform partner.",
+        "Met all delivery targets. The sponsor did not renew in the following budget cycle; "
+        "the relationship remains warm.",
+        "Campaign closed on plan; sponsor walked. Internal post-mortem flagged a mismatch between "
+        "the sponsor's brand-building goals and our direct-response measurement framework.",
+    ])
 
 
 def build_campaign_articles_and_summaries(
@@ -368,13 +604,6 @@ def build_campaign_articles_and_summaries(
     campaigns: list[dict],
     articles: list[dict],
 ) -> tuple[list[dict], list[dict]]:
-    """Return (bridge_rows, updated_campaigns).
-
-    `updated_campaigns` gets post_campaign_summary_es populated and
-    `weeks` scratch field removed. `articles` is mutated in place to
-    set sponsor_tag where applicable.
-    """
-    # Index articles by date for fast windowed lookup.
     articles_by_date: dict[str, list[dict]] = {}
     for a in articles:
         d = a["published_at"][:10]
@@ -386,13 +615,15 @@ def build_campaign_articles_and_summaries(
         fmt = c["format"]
         n_lo, n_hi = config.CAMPAIGN_ARTICLE_COUNTS[fmt]
         n_target = rng.randint(n_lo, n_hi) if n_hi > 0 else 0
+        # ended_early campaigns produce fewer articles.
+        if c["outcome_status"] == "ended_early" and n_target > 0:
+            n_target = max(1, int(n_target * 0.5))
 
         linked_ids: list[int] = []
         if n_target > 0:
             start = c["start_date"]
             end = c["end_date"]
             preferred = set(_SECTOR_PREFERRED_SECTIONS[c["sponsor_sector"]])
-            # Gather candidates in window.
             candidates: list[dict] = []
             for day_str in sorted(articles_by_date.keys()):
                 if start <= day_str <= end:
@@ -400,7 +631,6 @@ def build_campaign_articles_and_summaries(
                         if a["sponsor_tag"] is None and a["section"] in preferred:
                             candidates.append(a)
             if len(candidates) < n_target:
-                # Relax to all sections in the window.
                 extras = []
                 for day_str in sorted(articles_by_date.keys()):
                     if start <= day_str <= end:
@@ -421,10 +651,9 @@ def build_campaign_articles_and_summaries(
 
         topic = rng.choice(_SECTOR_TOPICS[c["sponsor_sector"]])
         base_summary = _SUMMARY_BUILDERS[fmt](rng, c, topic, len(linked_ids) or n_target)
-        outcome_followup = _outcome_and_followup(rng, c, len(linked_ids))
-        c["post_campaign_summary_es"] = f"{base_summary} {outcome_followup}"
+        outcome_text = _outcome_clause(rng, c, len(linked_ids))
+        c["post_campaign_summary"] = f"{base_summary} {outcome_text}".strip()
 
-    # Remove the scratch field.
     for c in campaigns:
         c.pop("weeks", None)
 
@@ -438,11 +667,11 @@ def write_campaigns(
     conn.executescript(CAMPAIGNS_DDL)
     conn.executemany(
         "INSERT INTO past_campaigns (campaign_id, sponsor_name, sponsor_sector, "
-        "start_date, end_date, format, fee_eur, impressions_delivered, "
-        "engagement_rate, post_campaign_summary_es) VALUES (:campaign_id, "
-        ":sponsor_name, :sponsor_sector, :start_date, :end_date, :format, "
-        ":fee_eur, :impressions_delivered, :engagement_rate, "
-        ":post_campaign_summary_es)",
+        "start_date, end_date, format, fee_usd, impressions_delivered, "
+        "engagement_rate, outcome_status, post_campaign_summary) VALUES "
+        "(:campaign_id, :sponsor_name, :sponsor_sector, :start_date, :end_date, "
+        ":format, :fee_usd, :impressions_delivered, :engagement_rate, "
+        ":outcome_status, :post_campaign_summary)",
         campaigns,
     )
     conn.executemany(
@@ -450,118 +679,119 @@ def write_campaigns(
         "VALUES (:campaign_id, :article_id)",
         bridge,
     )
-    # Propagate sponsor_tag back to articles table.
-    tag_updates = [
-        (a_id, s_name)
-        for s_name, a_id in _collect_sponsor_tag_updates(campaigns, bridge)
-    ]
+    sponsor_by_campaign = {c["campaign_id"]: c["sponsor_name"] for c in campaigns}
     conn.executemany(
         "UPDATE articles SET sponsor_tag = ? WHERE article_id = ?",
-        [(s, a) for (a, s) in tag_updates],
+        [(sponsor_by_campaign[r["campaign_id"]], r["article_id"]) for r in bridge],
     )
 
 
-def _collect_sponsor_tag_updates(campaigns, bridge):
-    sponsor_by_campaign = {c["campaign_id"]: c["sponsor_name"] for c in campaigns}
-    return [
-        (sponsor_by_campaign[r["campaign_id"]], r["article_id"])
-        for r in bridge
-    ]
-
-
 PRICING_REFERENCE_MD = """\
-# La Brújula — Rate Card 2026
+# The Cascade Tribune — Sponsorship Rate Card 2026
 
-_Prices in EUR. Valid for contracts signed Q1–Q3 2026. Regional
-distribution add-ons available on request. COP and USD quoted on
-demand._
+_Prices in USD. Valid for contracts signed Q1–Q3 2026. Regional add-ons
+available on request. All sponsored work carries disclosure labelling
+per IAB standards. Editorial control sits with the newsroom; sponsors
+receive no pre-publication review or takedown rights._
 
 ## Editorial sponsorship formats
 
 ### Sponsored Section
 
 A disclosure-labelled branded-content hub of 6–12 original articles
-produced by La Brújula's editorial team. Sponsor defines topic scope
-in advance; editorial retains full control over reporting and
-selection. Best for long-arc commitments on a clearly delimited
-subject (e.g., *inclusión financiera rural*, *transición energética*).
+produced by The Cascade Tribune's editorial team. Sponsor defines the
+scope of subject matter in advance; editorial retains full control
+over reporting and selection. Best for medium-arc commitments on a
+clearly delimited topic.
 
 - Duration: 4–12 weeks
-- Base fee: €12,000–€45,000
-- Median delivered impressions: ~450,000
-- Includes: hero piece, 5–11 follow-ups, one newsletter feature, social push
-- Strongest sector fit: financial services, philanthropy, public sector
+- Base fee: $15,000–$60,000
+- Median delivered impressions: ~520,000
+- Includes: anchor piece, 5–11 follow-ups, one newsletter feature, one social campaign
+- Strongest sector fit: utilities, financial services, philanthropy, healthcare
 
 ### Longform Series
 
-A 3–6 piece investigative or reportage series, usually produced under
-an editorial grant from a foundation or institutional funder. Longer
-production cycle; heavier per-piece lift.
+A 3–6 piece investigative or reportage series, typically produced
+under an editorial grant from a foundation, civic funder, or
+public-interest sponsor. Longer production timeline; heavier per-piece lift.
 
 - Duration: 8–24 weeks
-- Base fee: €18,000–€42,000
-- Median impressions: ~800,000
-- Includes: 3–6 longform pieces, editorial launch event, translation
-  into English on request
-- Strongest sector fit: philanthropy, government/EU, health
+- Base fee: $20,000–$60,000
+- Median impressions: ~900,000
+- Includes: 3–6 longform pieces, editorial launch event, one accompanying podcast episode
+- Strongest sector fit: community foundations, journalism funders, healthcare
 
 ### Branded Newsletter
 
-A single sponsored edition or 2–3 edition arc inside Diario, Verde, or
-Sobremesa. Highest direct engagement per impression thanks to the
-opt-in list.
+A single sponsored edition or 2–3 edition arc inside The Daily Cascade
+or Plate & Place. Highest direct engagement per impression thanks to
+the opt-in list.
 
 - Duration: 1–3 weeks (per arc)
-- Base fee: €3,000–€9,000 per send
-- Median impressions: ~35,000
-- Includes: custom subject line, one creative slot, link tracking
-- Strongest sector fit: any — especially consumer brands, tech, health
+- Base fee: $5,000–$12,000 per send
+- Median impressions: ~50,000
+- Includes: custom subject line, one creative slot, one promoted link with click tracking
+- Strongest sector fit: any — particularly consumer brands, food & drink, finance
 
 ### Event Partnership
 
 Co-produced panel or in-person event with livestream and recap
-coverage. Variable format (breakfast panel, evening discussion,
-festival partnership).
+coverage. Format flexible (breakfast panel, evening discussion,
+festival co-presentation, member meetup).
 
-- Duration: 1–4 weeks incl. promotion
-- Base fee: €8,000–€22,000
-- Median in-room + stream attendance: ~50,000
-- Includes: venue coordination, moderation, recorded panel, recap
-  newsletter, social clips
-- Strongest sector fit: philanthropy, government/EU, financial services
+- Duration: 1–4 weeks including promotion
+- Base fee: $10,000–$28,000
+- Median in-room + stream attendance: ~55,000 impressions
+- Includes: venue coordination, moderation, recorded panel, recap newsletter, social clips
+- Strongest sector fit: community foundations, arts institutions, healthcare, regional banks
 
 ### Podcast Sponsorship
 
-Full or partial sponsorship of a 4–8 week run of La Brújula's podcast,
-with host-read placements and optional episode co-production.
+Full or partial sponsorship of a 4–8 episode podcast run, with
+host-read placements and optional episode co-production. Cascade
+Tribune's podcast cadence is bi-weekly during sponsor windows.
 
 - Duration: 4–8 weeks
-- Base fee: €4,000–€11,000
-- Median listens over run: ~100,000
-- Includes: pre-roll + mid-roll host reads, show-notes placement, one
-  social teaser per episode
-- Strongest sector fit: tech, consumer brands, financial services
+- Base fee: $6,000–$14,000
+- Median listens over run: ~110,000
+- Includes: pre-roll + mid-roll host reads, show-notes placement, social teasers
+- Strongest sector fit: outdoor/lifestyle, financial services, food & drink
+
+### Underwriting
+
+A year-long brand-building partnership through low-frequency,
+high-trust placement: weekly sponsor banner on flagship pages,
+monthly recognition in The Daily Cascade, named acknowledgment at
+all live events. No created content; this is brand presence, not
+sponsored journalism.
+
+- Duration: 26–52 weeks
+- Base fee: $40,000–$200,000 (tiered)
+- Median annualized impressions: ~2.2M
+- Strongest sector fit: anchor sponsors — utilities, foundations, large regional employers
 
 ## Add-ons
 
-| Add-on                                  | Uplift      |
-| --------------------------------------- | ----------- |
-| English translation of all pieces       | +15% of base fee |
-| Regional distribution push (LatAm partners) | +€2,000     |
-| Post-campaign report + engagement audit | +€1,500     |
-| Spanish→Portuguese translation          | +12%        |
-| Extended social campaign (6 weeks)      | +€1,800     |
+| Add-on                                    | Uplift             |
+| ----------------------------------------- | ------------------ |
+| Newsletter cross-promotion (other list)   | +$2,500            |
+| Post-campaign engagement audit & report   | +$1,800            |
+| Spanish-language translation of pieces    | +12% of base fee   |
+| Extended social campaign (8 weeks)        | +$3,200            |
+| In-person sponsor recognition at one event| +$1,500            |
 
 ## Notes
 
-- All formats carry disclosure labelling per IAB Colombia standards.
-- Minimum booking: €3,000.
-- Editorial independence is non-negotiable: sponsors have no pre-publication
-  review or takedown rights. All sponsored work is marked as such and
-  archived with the original disclosure.
-- Grant-funded reportage (common in the NGO/foundation sector) is
-  priced separately from sponsorship formats and follows a project
-  budget model rather than the rate card above.
+- All formats include disclosure labelling per IAB standards.
+- Minimum booking: $5,000.
+- Editorial independence is non-negotiable: no pre-publication review, no takedown rights, no veto.
+- Foundation-funded reportage (common in our community-foundation and
+  journalism-funder partnerships) is priced separately from the rate
+  card above and follows a project-budget model.
+- Six-figure commitments ($100k+) trigger an annual partnership review
+  with both the publisher and the editor in chief; the goal is honest
+  alignment over time, not perpetual renewal.
 """
 
 
