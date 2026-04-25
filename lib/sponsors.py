@@ -16,6 +16,20 @@ from __future__ import annotations
 import random
 from pathlib import Path
 
+from lib.sponsors_new import (
+    _existing_leadership,
+    bull_run_cider,
+    cascadia_outfitters_coop,
+    lewis_clark_foundation,
+    meyer_northwest_trust,
+    onpoint_cooperative,
+    pacific_northwest_health,
+    pacific_tower_development,
+    portland_museum_of_art,
+    reed_college_press,
+    travel_oregon,
+)
+
 # English LLM-sludge tells. Hits abort the run.
 _BANNED_PHRASES: tuple[str, ...] = (
     "at the intersection of",
@@ -1769,11 +1783,30 @@ stumptownroasters-coop.com/2026-plan.
 
 
 # Wire up the master dict.
+#
+# The 4 existing sponsors get their leadership.md merged in from
+# _existing_leadership.leadership (introduced in Phase 0 of Sponsor Desk —
+# the prospect-brief tool's Section 3 needs a leadership.md per sponsor and
+# this file did not previously exist for the original four).
+#
+# The 10 new sponsors come from lib/sponsors_new/<slug>.py modules added
+# in Phase 0. Each module exposes a `content: dict[str, str]` of the same
+# shape as the existing _PGE / _POWELLS_CF / etc. dicts.
 SPONSORS: dict[str, dict[str, str]] = {
-    "portland-general-energy":     _PGE,
-    "powells-community-foundation": _POWELLS_CF,
-    "cascadia-credit-union":       _CASCADIA_CU,
-    "stumptown-roasters-coop":     _STUMPTOWN,
+    "portland-general-energy":      {**_PGE,         "leadership.md": _existing_leadership.leadership["portland-general-energy"]},
+    "powells-community-foundation": {**_POWELLS_CF,  "leadership.md": _existing_leadership.leadership["powells-community-foundation"]},
+    "cascadia-credit-union":        {**_CASCADIA_CU, "leadership.md": _existing_leadership.leadership["cascadia-credit-union"]},
+    "stumptown-roasters-coop":      {**_STUMPTOWN,   "leadership.md": _existing_leadership.leadership["stumptown-roasters-coop"]},
+    "pacific-tower-development":    pacific_tower_development.content,
+    "onpoint-cooperative":          onpoint_cooperative.content,
+    "pacific-northwest-health":     pacific_northwest_health.content,
+    "reed-college-press":           reed_college_press.content,
+    "meyer-northwest-trust":        meyer_northwest_trust.content,
+    "lewis-clark-foundation":       lewis_clark_foundation.content,
+    "cascadia-outfitters-coop":     cascadia_outfitters_coop.content,
+    "bull-run-cider":               bull_run_cider.content,
+    "travel-oregon":                travel_oregon.content,
+    "portland-museum-of-art":       portland_museum_of_art.content,
 }
 
 
